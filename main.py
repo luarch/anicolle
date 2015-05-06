@@ -6,6 +6,32 @@ import urllib.parse
 import argparse
 import os
 
+def chkup(bid, showPrompt=0):
+    name = c.execute("SELECT `name`, `chk_key`, `cur_epi` FROM `bangumi` WHERE `id` = ?", (str(bid),) ).fetchone()
+    if not name:
+        raise NameError
+    tepi = int(name[2])+1
+    chkkey = str(name[1]) + " " + "[%02d] MP4"%tepi
+    name = name[0]
+    if showPrompt:
+        print("查找 %s 的第 %s 集资源"%( name, str(tepi) ) )
+    chkkey = urllib.parse.quote_plus(chkkey)
+    r = urllib.request.urlopen( "http://share.popgo.org/search.php?title=%s&sorts=1"%chkkey ).read().decode('utf-8')
+    # re1 = re.compile('(magnet[^"]*)"')
+    # re2 = re.compile('查看详情页[^=]*="_blank" title="([^"]*' + '%02d'%str(tepi) + '(集|话|\]|】)[^"]*)"')
+    re1 = re.compile( '查看详情页.*?title="([^"]*' + '%02d'%tepi + '[集话\]】\[][^"]*)".*?(magnet[^"]*)"' )
+    maglink = re.search(re1, r)
+    if maglink:
+        magname = maglink.group(1)
+        maglink = maglink.group(2)
+        return { "magname": magname, "maglink": maglink }
+        # print("%s\n%s"%(magname, maglink))
+        # if os.system('echo "%s" | xclip -in -selection clipboard'%maglink) == 0:
+        #     print("磁力链接已拷贝到剪贴板")
+    else:
+        raise LookupError
+
+
 aparser = argparse.ArgumentParser()
 aparser.add_argument( "-a", "--add", nargs=4, metavar=("NAME","ONAIR","CUREPI", "CHKKEY"), help="Add a bgm." )
 aparser.add_argument( "-rm", "--remove", type=int, metavar="ID", help="Delete a bgm." )
@@ -13,7 +39,7 @@ aparser.add_argument( "-p", "--plus", type=int, metavar="ID", help="Plus 1 to th
 aparser.add_argument( "-d", "--decrease", type=int, metavar="ID", help="Decrease 1 to the bgm specified." )
 aparser.add_argument( "-s", "--show", type=int, metavar="ID", help="Display specified bangumi.", default=-1 )
 aparser.add_argument( "-t", "--showbyday", type=int, metavar="WEEKDAY", choices=range(0,8), help="Display bangumi on specified onair day.", default=-1 )
-aparser.add_argument( "-c", "--chkup", type=int, metavar="ID", help="Checkup latest updates of the specified bangumi and returns the magnet link to download" )
+aparser.add_argument( "-c", "--chkup", type=int, metavar="ID", help="Checkup latest updates of the specified bangumi and returns the magnet link to download", const=-1, nargs='?' )
 args = aparser.parse_args()
 
 sqlcon = sqlite3.connect( "bgmarker.db" )
@@ -62,28 +88,37 @@ elif args.decrease:
     else:
         print("ERR: specified bgm not found.")
 elif args.chkup:
-    name = c.execute("SELECT `name`, `chk_key`, `cur_epi` FROM `bangumi` WHERE `id` = ?", (str(args.chkup),) ).fetchone()
-    if not name:
-        print("ERR: specified bgm not found.")
-        exit(104)
-    tepi = int(name[2])+1
-    chkkey = str(name[1]) + " " + "[%02d]"%tepi
-    name = name[0]
-    print("查找 %s 的第 %s 集资源"%( name, str(tepi) ) )
-    chkkey = urllib.parse.quote_plus(chkkey)
-    r = urllib.request.urlopen( "http://share.popgo.org/search.php?title=%s&sorts=1"%chkkey ).read().decode('utf-8')
-    # re1 = re.compile('(magnet[^"]*)"')
-    # re2 = re.compile('查看详情页[^=]*="_blank" title="([^"]*' + '%02d'%str(tepi) + '(集|话|\]|】)[^"]*)"')
-    re1 = re.compile( '查看详情页.*?title="([^"]*' + '%02d'%tepi + '[集话\]】\[][^"]*)".*?(magnet[^"]*)"' )
-    maglink = re.search(re1, r)
-    if maglink:
-        magname = maglink.group(1)
-        maglink = maglink.group(2)
-        print("%s\n%s"%(magname, maglink))
-        if os.system('echo "%s" | xclip -in -selection clipboard'%maglink) == 0:
-            print("磁力链接已拷贝到剪贴板")
-    else:
-        print("没有找到资源")
+    if args.chkup>0:
+        try:
+            r = chkup(args.chkup, 1)
+            print("%s\n%s"%(r['magname'], r['maglink']))
+            if os.system('echo "%s" | xclip -in -selection clipboard'%r['maglink']) == 0:
+                print("磁力链接已拷贝到剪贴板")
+        except NameError:
+            print( "ERR: specified bgm not found." )
+        except LookupError:
+            print( "没有找到相关资源" )
+    elif args.chkup==-1:
+        print( "查找所有资源" )
+        sqlcmd = "SELECT `id`, `name` FROM `bangumi` WHERE `on_air_day`>0";
+        i = 0
+        mls = []
+        for row in c.execute( sqlcmd ).fetchall():
+            try:
+                r = chkup(row[0])
+            except:
+                continue
+                pass
+            else:
+                print( "%-3d %s\n有更新\n" % row )
+                mls.append(r['maglink'])
+                i = i+1
+        if not i:
+            print( "没有找到有更新的资源" )
+        else:
+            print( "%d个资源有更新" % i )
+            if os.system('echo -e "%s" | xclip -in -selection clipboard'%( '\n'.join(mls), )) == 0:
+                print("磁力链接已拷贝到剪贴板")
 else:
     sqlcmd = "SELECT `id`, `name`, `cur_epi`, `on_air_day` from `bangumi`";
     if args.show>=0:
@@ -91,5 +126,6 @@ else:
     if args.showbyday>=0:
         sqlcmd += " WHERE `on_air_day` = " + str(args.showbyday)
     sqlcmd += " ORDER BY `on_air_day` ASC"
-    for row in c.execute( sqlcmd ):
+    for row in c.execute( sqlcmd ).fetchall():
         print( "%-3d %s\n看到%s话 每周%s更新\n" % row )
+
