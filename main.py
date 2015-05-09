@@ -43,15 +43,44 @@ args = aparser.parse_args()
 
 if args.add:
     anicolle.add( args.add[0], args.add[1], args.add[2], args.add[3] )
+elif args.remove:
+    n = anicolle.getAni( args.remove )
+    if n:
+        n = n[1:2]
+        print( "确定删除%s吗？(Y/n)" % n )
+        c = str(input())
+        if c=='' or c=='Y' or c=='y':
+            anicolle.remove( args.remove )
+            print( "%s 已删除" % n  )
+    else:
+        print( "错误: 未找到指定番组" )
 elif args.plus:
-    anicolle.plus( args.plus )
+    n = anicolle.getAni( args.plus )
+    if n:
+        n = n[1:3]
+        print( "确定向%s(%d)加一吗？(Y/n)" % n )
+        c = str(input())
+        if c=='' or c=='Y' or c=='y':
+            anicolle.plus( args.plus )
+            print( "%s 已加一为 %d" % ( n[0], n[1]+1 ) )
+    else:
+        print( "错误: 未找到指定番组" )
 elif args.decrease:
-    anicolle.decrease( args.decrease )
+    n = anicolle.getAni( args.decrease )
+    if n:
+        n = n[1:3]
+        print( "确定向%s(%d)减一吗？(Y/n)" % n )
+        c = str(input())
+        if c=='' or c=='Y' or c=='y':
+            anicolle.decrease( args.decrease )
+            print( "%s 已减一为 %d" % ( n[0], n[1]-1 ) )
+    else:
+        print( "错误: 未找到指定番组" )
 elif args.chkup:
     if args.chkup>0:
         n = anicolle.getAni( args.chkup )
         if n:
-            print( "查找 %s 的第 %d 集资源" % (n[0][1], n[0][2]+1) )
+            print( "查找 %s 的第 %d 集资源" % (n[1], n[2]+1) )
             try:
                 r = anicolle.chkup(args.chkup)
                 print("%s\n%s"%(r['magname'], r['maglink']))
@@ -84,5 +113,8 @@ elif args.chkup:
                 print("磁力链接已拷贝到剪贴板")
 else:
     r = anicolle.getAni( args.show, args.showbyday )
-    for row in r:
-        print( "%-3d %s\t已看%s/周%s更新" % row )
+    if args.show>=0:
+        print( "%-3d %s\t已看%s/周%s更新" % r )
+    else:
+        for row in r:
+            print( "%-3d %s\t已看%s/周%s更新" % row )

@@ -13,11 +13,7 @@ def dbInit( dbname="bgmarker.db" ):
     global sqlcon, sqlcur
     sqlcon = _sqlite3.connect( dbname )
     sqlcur = sqlcon.cursor()
-    sqlcur.execute("CREATE TABLE IF NOT EXISTS bangumi ( id INTEGER PRIMARY KEY AUTOINCREMENT, name, cur_epi DEFAULT 0, on_air_epi DEFAULT 0, on_air_day DEFAULT 0 , `chk_key` DEFAULT '');")
-
-# def getName( bid ):
-#     name = sqlcur.execute("SELECT `name` FROM `bangumi` WHERE `id` = ?", (str(bid),) ).fetchone()
-#     return name[0]
+    sqlcur.execute("CREATE TABLE IF NOT EXISTS bangumi ( id INTEGER PRIMARY KEY AUTOINCREMENT, name, cur_epi INTEGER DEFAULT 0, on_air_epi INTEGER DEFAULT 0, on_air_day INTEGER DEFAULT 0 , `chk_key` DEFAULT '');")
 
 def getAni( bid=-1, on_air_day=-1 ):
     sqlcmd = "SELECT `id`, `name`, `cur_epi`, `on_air_day` from `bangumi`";
@@ -29,19 +25,25 @@ def getAni( bid=-1, on_air_day=-1 ):
     r = []
     for row in sqlcur.execute( sqlcmd ).fetchall():
         r.append(row)
+    if bid>=0 and r:
+        r = r[0]
     return r
 
 def add(name, on_air_day=0, cur_epi=0, chk_key=""):
-    return sqlcur.execute( "INSERT INTO `bangumi`( `name`, `on_air_day`, `cur_epi`, `chk_key` ) VALUES( ?, ?, ?, ? )", ( name, on_air_day, cur_epi, chk_key ) )
+    sqlcur.execute( "INSERT INTO `bangumi`( `name`, `on_air_day`, `cur_epi`, `chk_key` ) VALUES( ?, ?, ?, ? )", ( name, on_air_day, cur_epi, chk_key ) )
+    sqlcon.commit()
 
 def remove(bid):
-    return sqlcur.execute( "DELETE FROM `bangumi` WHERE `id` = ?", (str(bid), ) )
+    sqlcur.execute( "DELETE FROM `bangumi` WHERE `id` = ?", (str(bid), ) )
+    sqlcon.commit()
 
 def plus( bid ):
-    return sqlcur.execute("UPDATE `bangumi` SET `cur_epi`=`cur_epi`+1 WHERE `id` = ?", (str(bid),) )
+    sqlcur.execute("UPDATE `bangumi` SET `cur_epi`=`cur_epi`+1 WHERE `id` = ?", (str(bid),) )
+    sqlcon.commit()
 
 def decrease( bid ):
-    return sqlcur.execute("UPDATE `bangumi` SET `cur_epi`=`cur_epi`-1 WHERE `id` = ?", (str(bid),) )
+    sqlcur.execute("UPDATE `bangumi` SET `cur_epi`=`cur_epi`-1 WHERE `id` = ?", (str(bid),) )
+    sqlcon.commit()
 
 def chkup( bid ):
     name = sqlcur.execute("SELECT `name`, `chk_key`, `cur_epi`, `on_air_day` FROM `bangumi` WHERE `id` = ?", (str(bid),) ).fetchone()
