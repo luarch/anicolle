@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-import anicolle
+import anicolle.core as anicolle
 import os
 
 anicolle.dbInit()

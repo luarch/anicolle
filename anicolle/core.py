@@ -64,5 +64,3 @@ def chkup( bid ):
         return { "magname": magname, "maglink": maglink }
     else:
         raise LookupError
-
-
