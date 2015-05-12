@@ -24,7 +24,7 @@ def getAni( bid=-1, on_air_day=-1 ):
     sqlcmd += " ORDER BY `on_air_day` ASC"
     r = []
     for row in sqlcur.execute( sqlcmd ).fetchall():
-        r.append(row)
+        r.append(list(row))
     if bid>=0 and r:
         r = r[0]
     return r
@@ -57,8 +57,6 @@ def decrease( bid ):
 
 def chkup( bid ):
     name = sqlcur.execute("SELECT `name`, `chk_key`, `cur_epi`, `on_air_day` FROM `bangumi` WHERE `id` = ?", (str(bid),) ).fetchone()
-    if not name:
-        raise NameError
     if not name[1] or not name[3]:
         return 0
     tepi = int(name[2])+1
@@ -73,4 +71,4 @@ def chkup( bid ):
         maglink = maglink.group(2)
         return { "magname": magname, "maglink": maglink }
     else:
-        raise LookupError
+        return 0

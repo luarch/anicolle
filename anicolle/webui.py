@@ -1,35 +1,26 @@
 #!/usr/bin/env python
 import core
+import json
 from bottle import route, run, template, request, static_file
 
 core.dbInit( "../bgmarker.db" )
 
 @route("/static/<path:path>")
 def home(path):
-    return static_file( path, root('./public') );
+    return static_file( path, root='./public' );
 
 @route("/")
-@route("/home")
 def home():
-    return template("greeting", bgms=core.getAni())
+    return template("home")
 
-@route("/action/<act>/<id:int>")
-def plus(act, id):
-    if not core.getAni(id):
-        abort(404, "Specified bgm not found")
-    if act=='plus':
-        core.plus(id)
-    elif act=='decrease':
-        core.decrease(id)
-    elif act=='chkup':
-        try:
-            mag = core.chkup(id)
-        except:
-            mag = 0
-            pass
-        return template("action", bgm=core.getAni(id), action=act, mag=mag)
-    else:
-        abort(403, "Permission denied")
-    return template("action", bgm=core.getAni(id), action=act)
+@route("/action/get/")
+@route("/action/get")
+def getAllBgm():
+    return json.dumps( core.getAni() )
 
-run(host='localhost', port=8080)
+@route("/action/get/<bid>")
+def getBgm( bid ):
+    return json.dumps( core.getAni(int(bid)) )
+
+
+run(host='localhost', port=8080, debug=1)

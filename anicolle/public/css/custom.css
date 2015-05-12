@@ -1,0 +1,12 @@
+.bgm-action a {
+    width: 8rem;
+}
+
+.bgm-editor {
+    clear: both;
+}
+
+a.bgm-title
+{
+    text-decoration: none;
+}
