@@ -1,3 +1,27 @@
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Raleway Light'), local('Raleway-Light'), url(../font/-_Ctzj9b56b8RgXW8FArifk_vArhqVIZ0nv9q090hN8.woff2) format('woff2'), url(../font/-_Ctzj9b56b8RgXW8FAriRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), url(../font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2'), url(../font/IczWvq5y_Cwwv_rBjOtT0w.woff) format('woff');
+}
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(../font/xkvoNo9fC8O2RDydKj12b_k_vArhqVIZ0nv9q090hN8.woff2) format('woff2'), url(../font/xkvoNo9fC8O2RDydKj12bxsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
+
+body {
+    overflow-y: scroll;
+}
+
 .bgm-action a {
     width: 8rem;
 }
@@ -6,7 +30,10 @@
     clear: both;
 }
 
-a.bgm-title
-{
+a.bgm-title {
     text-decoration: none;
+}
+
+.plus-row {
+    height: 30rem;
 }
