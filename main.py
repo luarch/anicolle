@@ -77,6 +77,7 @@ elif args.remove:
     n = anicolle.getAni( args.remove )
     if n:
         n = n[1:2]
+        n = tuple(n)
         print( "确定删除%s吗？(Y/n)" % n )
         c = str(input())
         if c=='' or c=='Y' or c=='y':
@@ -88,6 +89,7 @@ elif args.plus:
     n = anicolle.getAni( args.plus )
     if n:
         n = n[1:3]
+        n = tuple(n)
         print( "确定向%s(%d)加一吗？(Y/n)" % n )
         c = str(input())
         if c=='' or c=='Y' or c=='y':
@@ -99,6 +101,7 @@ elif args.decrease:
     n = anicolle.getAni( args.decrease )
     if n:
         n = n[1:3]
+        n = tuple(n)
         print( "确定向%s(%d)减一吗？(Y/n)" % n )
         c = str(input())
         if c=='' or c=='Y' or c=='y':
@@ -146,8 +149,10 @@ else:
     r = anicolle.getAni( args.show, args.showbyday )
     if args.show>=0:
         r = r[0:4]
+        r = tuple(r)
         print( "%-3d %s\t已看%s/周%s更新" % r )
     else:
         for row in r:
             row = row[0:4]
+            row = tuple(row)
             print( "%-3d %s\t已看%s/周%s更新" % row )
