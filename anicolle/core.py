@@ -16,7 +16,7 @@ def dbInit( dbname="bgmarker.db" ):
     sqlcur.execute("CREATE TABLE IF NOT EXISTS bangumi ( id INTEGER PRIMARY KEY AUTOINCREMENT, name, cur_epi INTEGER DEFAULT 0, on_air_epi INTEGER DEFAULT 0, on_air_day INTEGER DEFAULT 0 , `chk_key` DEFAULT '');")
 
 def getAni( bid=-1, on_air_day=-1 ):
-    sqlcmd = "SELECT `id`, `name`, `cur_epi`, `on_air_day` from `bangumi`";
+    sqlcmd = "SELECT `id`, `name`, `cur_epi`, `on_air_day`, `chk_key` from `bangumi`";
     if bid>=0:
         sqlcmd += " WHERE `id` = " + str(bid)
     if on_air_day>=0:
@@ -29,8 +29,18 @@ def getAni( bid=-1, on_air_day=-1 ):
         r = r[0]
     return r
 
-def add(name, on_air_day=0, cur_epi=0, chk_key=""):
-    sqlcur.execute( "INSERT INTO `bangumi`( `name`, `on_air_day`, `cur_epi`, `chk_key` ) VALUES( ?, ?, ?, ? )", ( name, on_air_day, cur_epi, chk_key ) )
+def add( name, cur_epi=0, on_air_day=0, chk_key="" ):
+    sqlcur.execute(
+        "INSERT INTO `bangumi`( `name`, `on_air_day`, `cur_epi`, `chk_key` ) VALUES( ?, ?, ?, ? )",
+        ( name, int(on_air_day), int(cur_epi), chk_key )
+    )
+    sqlcon.commit()
+
+def modify( bid, name, cur_epi=0, on_air_day=0, chk_key="" ):
+    sqlcur.execute( "UPDATE `bangumi` SET `name` = ? WHERE `id` = ?", ( name, bid ) )
+    sqlcur.execute( "UPDATE `bangumi` SET `cur_epi` = ? WHERE `id` = ?", ( int(cur_epi), bid ) )
+    sqlcur.execute( "UPDATE `bangumi` SET `on_air_day` = ? WHERE `id` = ?", ( int(on_air_day), bid ) )
+    sqlcur.execute( "UPDATE `bangumi` SET `chk_key` = ? WHERE `id` = ?", ( chk_key, bid ) )
     sqlcon.commit()
 
 def remove(bid):

@@ -7,8 +7,11 @@ anicolle.dbInit()
 
 aparser = argparse.ArgumentParser()
 aparser.add_argument(
-    "-a", "--add", nargs=4,
-    metavar=("NAME","ONAIR","CUREPI", "CHKKEY"), help="Add a bgm."
+    "-a", "--add", nargs="?", const="1"
+)
+aparser.add_argument(
+    "-m", "--modify", type=int,
+    metavar="ID", help="Modify a bgm."
 )
 aparser.add_argument(
     "-rm", "--remove", type=int,
@@ -42,7 +45,34 @@ args = aparser.parse_args()
 
 
 if args.add:
-    anicolle.add( args.add[0], args.add[1], args.add[2], args.add[3] )
+    nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )
+    print( "正在添加番组" )
+    n = [0, 0, 0, 0, 0]
+    for i in range(1, 5):
+        print( "%s: " % ( nc[i], ) )
+        c = str(input())
+        if not c=='':
+            n[i] = c
+        else:
+            if i==2 or i==3:
+                n[i] = 0
+            else:
+                n[i] = ''
+    anicolle.add( n[1], n[2], n[3], n[4] )
+elif args.modify:
+    nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )
+    n = anicolle.getAni( args.modify )
+    t = list(n)
+    if not n:
+        print( "错误: 未找到指定番组" )
+        exit()
+    print( "您正在修改%s的信息" % (n[1], ) )
+    for i in range(1, 5):
+        print( "%s: (回车默认 %s )" % (nc[i], str(n[i])) )
+        c = str(input())
+        if not c=='':
+            t[i] = c
+    anicolle.modify( args.modify, t[1], t[2], t[3], t[4] )
 elif args.remove:
     n = anicolle.getAni( args.remove )
     if n:
@@ -102,9 +132,10 @@ elif args.chkup:
                 continue
                 pass
             else:
-                print( "%-3d %s\n有更新: %s\n" % (row[0], row[1], r['magname']) )
-                mls.append(r['maglink'])
-                i = i+1
+                if r:
+                    print( "%-3d %s\n有更新: %s\n" % (row[0], row[1], r['magname']) )
+                    mls.append(r['maglink'])
+                    i = i+1
         if not i:
             print( "没有找到有更新的资源" )
         else:
@@ -114,7 +145,9 @@ elif args.chkup:
 else:
     r = anicolle.getAni( args.show, args.showbyday )
     if args.show>=0:
+        r = r[0:4]
         print( "%-3d %s\t已看%s/周%s更新" % r )
     else:
         for row in r:
+            row = row[0:4]
             print( "%-3d %s\t已看%s/周%s更新" % row )
