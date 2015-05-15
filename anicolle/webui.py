@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-import core
+import anicolle.core as core
 import json
 from socket import gethostname
-from bottle import route, run, template, request, static_file, Bottle
+from bottle import route, run, template, request, static_file, Bottle, TEMPLATE_PATH
 
 app = Bottle()
-
-core.dbInit( "../bgmarker.db" )
+workDir = "./anicolle/"
+TEMPLATE_PATH.append(workDir+"views")
 
 @app.route("/static/<path:path>")
 def home(path):
-    return static_file( path, root='./public' );
+    return static_file( path, root=workDir+'public' );
 
 @app.route("/")
 def home():
@@ -57,4 +57,12 @@ def remove(bid):
 def chkup(bid):
     return json.dumps( core.chkup(bid) );
 
-run(app, host='localhost', port=8080, debug=1)
+def start(port=8080):
+    port = int(port)
+    run(app, host='localhost', port=port)
+
+# if __name__ == '__main__':
+#     workDir = "./"
+#     TEMPLATE_PATH = workDir+"views"
+#     core.dbInit( "../bgmarker.db" )
+#     run(app, host='localhost', port=8080, debug=1)

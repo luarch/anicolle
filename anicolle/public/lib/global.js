@@ -95,6 +95,7 @@ function showBgmEditor(obj) {
         beh = beh.replace(/{{bgmChkKey}}/g, "");
         $(obj).append(beh);
         $(".bgm-editor select option[value=0]").attr("selected", true);
+        $(".bgm-editor a.button:eq(1)").remove();
     }
 }
 

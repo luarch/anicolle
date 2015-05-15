@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import anicolle.core as anicolle
+import anicolle.webui as webui
 import os
 
 anicolle.dbInit()
@@ -39,6 +40,12 @@ aparser.add_argument(
     metavar="ID",
     help="Checkup latest updates of the specified bangumi and returns the magnet link to download",
     const=-1, nargs='?'
+)
+aparser.add_argument(
+    "-w", "--webui", nargs="?", type=int,
+    metavar="port",
+    const="8080",
+    help="Start the web-based user interface"
 )
 args = aparser.parse_args()
 
@@ -145,6 +152,8 @@ elif args.chkup:
             print( "%d个资源有更新" % i )
             if os.system('echo -e "%s" | xclip -in -selection clipboard'%( '\n'.join(mls), )) == 0:
                 print("磁力链接已拷贝到剪贴板")
+elif args.webui:
+    webui.start(args.webui);
 else:
     r = anicolle.getAni( args.show, args.showbyday )
     if args.show>=0:

@@ -45,10 +45,12 @@
       </div>
       <div class="one-half column">
           <p style="margin-top: 2.0rem; margin-bottom: 0.5rem"><small>服务器 <b ><i>{{hostname}}</i></b></small></p>
+          <!--
           <a href="#" class="button button-primary" style="width:20.4rem">检查全部</a>
           <br>
           <a href="admin" class="button" style="width:10.0rem">管理</a>
           <a href="admin" class="button" style="width:10.0rem">退出</a>
+          -->
       </div>
     </div>
 
