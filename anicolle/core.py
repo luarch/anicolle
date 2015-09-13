@@ -60,7 +60,7 @@ def chkup( bid ):
     if not name[1] or not name[3]:
         return 0
     tepi = int(name[2])+1
-    chkkey = str(name[1]) + " " + "[%02d] MP4"%tepi
+    chkkey = str(name[1]) + " " + "%02d MP4"%tepi
     name = name[0]
     chkkey = _up.quote_plus(chkkey)
     r = _ur.urlopen( "http://share.popgo.org/search.php?title=%s&sorts=1"%chkkey ).read().decode('utf-8')
