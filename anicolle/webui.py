@@ -23,7 +23,7 @@ def static(path):
 @app.route("/")
 @app.auth_basic(user_auth)
 def home():
-    return template("home", hostname = gethostname() )
+    return template("home", hostname = gethostname().upper() )
 
 @app.route("/action/get/")
 @app.route("/action/get")
