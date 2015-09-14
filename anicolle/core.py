@@ -4,7 +4,7 @@
 Collect your animes like a geek.
 
 Database model and operations here.
-Unlike the previous version, this version returns objects as results rather than dictionaries in previous version.
+Unlike the previous version, this version returns objects as results rather than dictionaries by default.
 You can force convert it into a dict by using to_dict().
 """
 
@@ -47,15 +47,15 @@ def getAni( bid=-1, on_air_day=-1 ):
     try:
         if bid>=0:
             # get a single record
-            r = Bangumi.get(Bangumi.id==bid)
+            r = Bangumi.get(Bangumi.id==bid).to_dict()
         elif on_air_day>=0:
             # get a set of records
             for bgm in Bangumi.select().where(Bangumi.on_air_day==on_air_day):
-                r.append(bgm)
+                r.append(bgm.to_dict())
         else:
             # get all records
             for bgm in Bangumi.select():
-                r.append(bgm)
+                r.append(bgm.to_dict())
         return r
     except Bangumi.DoesNotExist:
         return None
@@ -68,14 +68,23 @@ def add( name, cur_epi=0, on_air_day=0, chk_key="" ):
     bgm.save()
     db.close()
 
-def modify( bid, name, cur_epi=0, on_air_day=0, chk_key="" ):
+def modify( bid, name=None, cur_epi=None, on_air_day=None, chk_key=None ):
     db.connect()
     try:
         bgm = Bangumi.get(Bangumi.id==bid)
-        bgm.name = name
-        bgm.cur_epi = int(cur_epi)
-        bgm.on_air_day = int(on_air_day)
-        bgm.chk_key = chk_key
+
+        if name:
+            bgm.name = name
+
+        if cur_epi:
+            bgm.cur_epi = int(cur_epi)
+
+        if on_air_day:
+            bgm.on_air_day = int(on_air_day)
+
+        if chk_key:
+            bgm.chk_key = chk_key
+
         bgm.save()
         return 1
     except Bangumi.DoesNotExist:
