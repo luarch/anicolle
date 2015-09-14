@@ -3,13 +3,16 @@
 import json
 from socket import gethostname
 from bottle import route, run, template, request, static_file, Bottle, TEMPLATE_PATH, auth_basic
+from .config import config
 
 app = Bottle()
 workDir = "./anicolle/"
 TEMPLATE_PATH.append(workDir+"views")
+auth_user = config['default'].AUTH_USER
+auth_passwd = config['default'].AUTH_PASSWD
 
 def user_auth( user, passwd  ):
-    if user == 'archie' and passwd == '110120':
+    if user == auth_user and passwd == auth_passwd:
         return True
     return False
 
