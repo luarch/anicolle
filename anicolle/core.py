@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """AniColle Library
 
 Collect your animes like a geek.
@@ -32,7 +33,7 @@ class Bangumi(Model):
             'name': self.name,
             'cur_epi': self.cur_epi,
             'on_air_epi': self.on_air_epi,
-            'on_air_epi': self.on_air_day,
+            'on_air_day': self.on_air_day,
             'chk_key': self.chk_key
         }
 
