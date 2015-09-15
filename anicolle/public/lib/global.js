@@ -81,10 +81,10 @@ function showBgmEditor(obj) {
     if( $(obj).hasClass('bgm-row') ) {
         var r = anicolle.getAni( getBid(obj) );
         r.done(function(data){
-            beh = beh.replace(/{{bgmBid}}/g, data[0]);
-            beh = beh.replace(/{{bgmTitle}}/g, escapeQuote(data[1]));
-            beh = beh.replace(/{{bgmCurEpi}}/g, data[2]);
-            beh = beh.replace(/{{bgmChkKey}}/g, escapeQuote(data[4]));
+            beh = beh.replace(/{{bgmBid}}/g, data['id']);
+            beh = beh.replace(/{{bgmTitle}}/g, escapeQuote(data['name']));
+            beh = beh.replace(/{{bgmCurEpi}}/g, data['cur_epi']);
+            beh = beh.replace(/{{bgmChkKey}}/g, escapeQuote(data['chk_key']));
             $(obj).append(beh);
             $(".bgm-editor select option[value="+data[3]+"]").attr("selected", true);
         });
@@ -108,7 +108,7 @@ function genBgmRow( row ) {
     brh = brh.replace(/{{bgmBid}}/g, row['id']);
     brh = brh.replace(/{{bgmTitle}}/g, escapeQuote(row['name']));
     brh = brh.replace(/{{bgmCurEpi}}/g, row['cur_epi']);
-    var onAirDict = [ '结', '一', '二', '三', '四', '五', '六', '日' ];
+    var onAirDict = [ '结', '一', '二', '三', '四', '五', '六', '日', '无', '不定' ];
     var onAir = onAirDict[row['on_air_day']];
     brh = brh.replace(/{{bgmOnAir}}/g, onAir);
     brh = brh.replace(/{{bgmOnAirCode}}/g, row['on_air_day']);
