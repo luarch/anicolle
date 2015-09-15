@@ -1,8 +1,8 @@
 var eid = -1;
-var bgmEditorTpl = 
+var bgmEditorTpl =
     '<div class="bgm-editor"><form><div class="row"><div class="one-half column"><label for="bgmName">番剧名称</label><input type="text" id="bgmName" class="u-full-width" value="{{bgmTitle}}"></div><div class="three columns"><label for="bgmCurEpi">已看到</label><input type="number" id="bgmCurEpi" class="u-full-width" value="{{bgmCurEpi}}"></div><div class="three columns"><label for="bgmOnAir">更新于</label><select id="bgmOnAir" class="u-full-width"><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="7">周日</option><option value="9">不定期</option><option value="0">已完结</option></select></div></div><div class="row"><label for="bgmChkkey">更新检索关键词 (通过 漫游BT服务器)</label><input type="text" id="bgmChkkey" class="u-full-width" value="{{bgmChkKey}}"></div><a href="javascript:void(0)" class="button button-primary" onclick="doModify({{bgmBid}})">保存</a> <a href="javascript:void(0)" class="button" onclick="doRemove({{bgmBid}})">删除</a> <a href="javascript:void(0)" class="button" onclick="hideBgmEditor()">取消</a></form></div>';
 
-var bgmRowTpl = 
+var bgmRowTpl =
     '<div class="row bgm-row" style="margin-top: 50px" data-bid="{{bgmBid}}" data-onair="{{bgmOnAirCode}}"><div class="two-thirds column"><h3><small>[{{bgmOnAir}}]</small> <a href="javascript:void(0)" class="bgm-title">{{bgmTitle}} (<span class="cur-epi">{{bgmCurEpi}}</span>)</a></h3></div><div class="one-third column bgm-action"><a class="button button-primary" href="javascript:void(0)" onclick="doPlus({{bgmBid}})">+1</a> <a class="button" href="javascript:void(0)" onclick="doDecrease({{bgmBid}})">-1</a> <a class="button" href="javascript:void(0)" onclick="doChk({{bgmBid}})">检查</a></div></div>';
 
 anicolle = {
@@ -105,13 +105,13 @@ function hideBgmEditor() {
 
 function genBgmRow( row ) {
     var brh = bgmRowTpl;
-    brh = brh.replace(/{{bgmBid}}/g, row[0]);
-    brh = brh.replace(/{{bgmTitle}}/g, escapeQuote(row[1]));
-    brh = brh.replace(/{{bgmCurEpi}}/g, row[2]);
+    brh = brh.replace(/{{bgmBid}}/g, row['id']);
+    brh = brh.replace(/{{bgmTitle}}/g, escapeQuote(row['name']));
+    brh = brh.replace(/{{bgmCurEpi}}/g, row['cur_epi']);
     var onAirDict = [ '结', '一', '二', '三', '四', '五', '六', '日' ];
-    var onAir = onAirDict[row[3]];
+    var onAir = onAirDict[row['on_air_day']];
     brh = brh.replace(/{{bgmOnAir}}/g, onAir);
-    brh = brh.replace(/{{bgmOnAirCode}}/g, row[3]);
+    brh = brh.replace(/{{bgmOnAirCode}}/g, row['on_air_day']);
     return brh;
 }
 
