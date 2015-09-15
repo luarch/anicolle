@@ -1,2 +1,2 @@
-bottle
-peewee
+bottle>=0.12.8
+peewee>=2.6.3
