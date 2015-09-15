@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from . import core as ac
+from . import webui
 import os
 from .arg_parser import parse_args
 
@@ -105,7 +106,7 @@ def main():
                 if os.system('echo -e "%s" | xclip -in -selection clipboard'%( '\n'.join(mls), )) == 0:
                     print("磁力链接已拷贝到剪贴板")
     elif args.webui:
-        # webui.start(args.webui);
+        webui.start(args.webui);
         pass
     else:
         r = ac.getAni( args.show, args.showbyday )
