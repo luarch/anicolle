@@ -10,11 +10,9 @@ You can force convert it into a dict by using to_dict().
 """
 
 from peewee import *
+from .seeker import seeker
 from .config import config
 import os
-import re as _re
-import urllib.request as _ur
-import urllib.parse as _up
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -150,20 +148,7 @@ def chkup( bid ):
         \/_\/_\/_\/_\/_\/_\/_\/_\/
         '''
 
-        tepi = bgm.cur_epi+1
-        chkkey = str(bgm.chk_key) + " " + "%02d"%tepi
-        # name = bgm.name
-        chkkey = _up.quote_plus(chkkey)
-
-        r = _ur.urlopen( "http://share.popgo.org/search.php?title=%s&sorts=1"%chkkey ).read().decode('utf-8')
-        re1 = _re.compile( '查看详情页.*?title="([^"]*' + '%02d'%tepi + '[集话\]】\[][^"]*)".*?(magnet[^"]*)"' )
-        maglink = _re.search(re1, r)
-        if maglink:
-            magname = maglink.group(1)
-            maglink = maglink.group(2)
-            return { "magname": magname, "maglink": maglink }
-        else:
-            return 0
+        return seeker['popgo'].seek(bgm.chk_key, bgm.cur_epi)
 
         '''
          _/\_/\_/\_/\_/\_/\_/\_/\_
