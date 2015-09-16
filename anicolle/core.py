@@ -145,6 +145,11 @@ def chkup( bid ):
     except Bangumi.DoesNotExist:
         return 0
     else:
+        '''
+        Start of checking module
+        \/_\/_\/_\/_\/_\/_\/_\/_\/
+        '''
+
         tepi = bgm.cur_epi+1
         chkkey = str(bgm.chk_key) + " " + "%02d"%tepi
         # name = bgm.name
@@ -159,6 +164,11 @@ def chkup( bid ):
             return { "magname": magname, "maglink": maglink }
         else:
             return 0
+
+        '''
+         _/\_/\_/\_/\_/\_/\_/\_/\_
+         End of checking module
+        '''
     finally:
         db.close()
 

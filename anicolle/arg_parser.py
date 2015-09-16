@@ -38,9 +38,7 @@ def parse_args():
         const=-1, nargs='?'
     )
     aparser.add_argument(
-        "-w", "--webui", nargs="?", type=int,
-        metavar="port",
-        const="8080",
+        "-w", "--webui", action="store_true",
         help="Start the web-based user interface"
     )
     args = aparser.parse_args()

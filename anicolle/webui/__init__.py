@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from .  import core as core
+from .. import core as core
 import json
 from socket import gethostname
 from bottle import route, run, auth_basic, template, request, static_file, Bottle, TEMPLATE_PATH
 
 app = Bottle()
-workDir = "./anicolle/"
+workDir = "./anicolle/webui/"
 TEMPLATE_PATH.append(workDir+"views")
 auth_user = core.config.AUTH_USER
 auth_passwd = core.config.AUTH_PASSWD

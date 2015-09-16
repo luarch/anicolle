@@ -11,6 +11,7 @@ class ProductionConfig(Config):
     AUTH_PASSWD = "YOUR_PASSWORD"
     DEBUG = False
     SERVER_HOST = "0.0.0.0"
+    SERVER_PORT = "7777"
 
 config = {
     'default': Config,
