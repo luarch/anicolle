@@ -7,6 +7,7 @@ from .arg_parser import parse_args
 
 def main():
     args = parse_args()
+    ac.dbInit()
 
     if args.add:
         nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )

@@ -3,13 +3,12 @@ from .  import core as core
 import json
 from socket import gethostname
 from bottle import route, run, auth_basic, template, request, static_file, Bottle, TEMPLATE_PATH
-from .config import config
 
 app = Bottle()
 workDir = "./anicolle/"
 TEMPLATE_PATH.append(workDir+"views")
-auth_user = config['default'].AUTH_USER
-auth_passwd = config['default'].AUTH_PASSWD
+auth_user = core.config.AUTH_USER
+auth_passwd = core.config.AUTH_PASSWD
 
 def user_auth( user, passwd  ):
     if user == auth_user and passwd == auth_passwd:
@@ -74,12 +73,7 @@ def remove(bid):
 def chkup(bid):
     return json.dumps( core.chkup(bid) );
 
-def start(port=8080):
+def start(port=core.config.SERVER_PORT):
+    print("Running with ", core.run_mode, " mode.")
     port = int(port)
-    run(app, host='localhost', port=port)
-
-if __name__ == '__main__':
-    workDir = "./"
-    TEMPLATE_PATH = workDir+"views"
-    core.dbInit( "../bgmarker.db" )
-    run(app, host='localhost', port=8080, debug=1)
+    run(app, host=core.config.SERVER_HOST, port=port, debug=core.config.DEBUG)

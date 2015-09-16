@@ -11,11 +11,20 @@ You can force convert it into a dict by using to_dict().
 
 from peewee import *
 from .config import config
+import os
 import re as _re
 import urllib.request as _ur
 import urllib.parse as _up
 
-db = SqliteDatabase(config['default'].DATABASE)
+run_mode = os.getenv('ANICOLLE_MODE') or 'default'
+try:
+    config = config[run_mode]
+    # print("Running with", run_mode, "mode")
+except KeyError :
+    print("No such running mode. Check your ANICOLLE_MODE system env please.")
+    exit()
+
+db = SqliteDatabase(config.DATABASE)
 
 class Bangumi(Model):
     # `id` field is added automatically
