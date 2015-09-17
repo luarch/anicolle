@@ -13,6 +13,7 @@ from peewee import *
 from .seeker import seeker
 from .config import config
 import os
+from json import loads as json_loads
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -30,7 +31,7 @@ class Bangumi(Model):
     cur_epi = IntegerField(default=0)
     on_air_epi = IntegerField(default=0)
     on_air_day = IntegerField(default=0)
-    chk_key = TextField(default='')
+    seeker = TextField(default='[{"seeker": "popgo", "chk_key": ""}]')
     class Meta:
         database = db
 
@@ -148,7 +149,14 @@ def chkup( bid ):
         \/_\/_\/_\/_\/_\/_\/_\/_\/
         '''
 
-        return seeker['popgo'].seek(bgm.chk_key, bgm.cur_epi)
+        r = []
+
+        bgm_seeker_data = json_loads(bgm.seeker);
+
+        for seeker_seed in bgm_seeker_data:
+            r.append(seeker[seeker_seed['seeker']].seek(seeker_seed['chk_key'], bgm.cur_epi))    # Maybe we need some new names. This can be confusable.
+
+        return r
 
         '''
          _/\_/\_/\_/\_/\_/\_/\_/\_
