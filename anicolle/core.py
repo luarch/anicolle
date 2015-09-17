@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""AniColle Library
+"""
+AniColle Library
 
 Collect your animes like a geek.
 
@@ -13,7 +14,7 @@ from peewee import *
 from .seeker import seeker
 from .config import config
 import os
-from json import loads as json_loads
+from json import loads as json_loads, dump as json_dump
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -27,11 +28,27 @@ db = SqliteDatabase(config.DATABASE)
 
 class Bangumi(Model):
     # `id` field is added automatically
-    name = TextField()
-    cur_epi = IntegerField(default=0)
-    on_air_epi = IntegerField(default=0)
-    on_air_day = IntegerField(default=0)
-    seeker = TextField(default='[{"seeker": "popgo", "chk_key": ""}]')
+    name = TextField()                      # Bangumi name
+    cur_epi = IntegerField(default=0)       # Currently viewing episode
+    on_air_epi = IntegerField(default=0)    # (Placeholder)
+    on_air_day = IntegerField(default=0)    # The on air weekday. [1-7] for Monday - Sunday, 0 for not on air, 8 for not fixed on air day.
+    seeker = TextField(default='[]')
+    '''
+    Seeker is a modularized part of the program which is used to seek new episode of a bangumi programatically.
+    Seekers are placed under `seeker` directory, and they are imported into this file as a dict named `seeker`.
+
+    Seeker data saved in database is a serialized array (in json format), as following shows:
+        [
+            {
+                "seeker": SEEKER_NAME,
+                "chk_key": SEEKER_CHECK_KEY
+            },
+        ]
+
+    chk_key is used for calling the `seek` function of 'seeker', usually a search keyword of the specific bangumi.
+    For example, you want to download 'Tokyo Ghoul' from bilibili, then you should use "东京喰种" as a chk_key.
+    For more information on `chk_key`, please refer to our wiki.
+    '''
     class Meta:
         database = db
 
@@ -71,13 +88,13 @@ def getAni( bid=-1, on_air_day=-1 ):
     finally:
         db.close()
 
-def add( name, cur_epi=0, on_air_day=0, chk_key="" ):
+def create( name, cur_epi=0, on_air_day=0, seeker=[] ):
     db.connect()
-    bgm = Bangumi(name=name, cur_epi=cur_epi, on_air_day=on_air_day, chk_key=chk_key);
+    bgm = Bangumi(name=name, cur_epi=cur_epi, on_air_day=on_air_day, seeker=json_dump(seeker));
     bgm.save()
     db.close()
 
-def modify( bid, name=None, cur_epi=None, on_air_day=None, chk_key=None ):
+def modify( bid, name=None, cur_epi=None, on_air_day=None, seeker=None ):
     db.connect()
     try:
         bgm = Bangumi.get(Bangumi.id==bid)
@@ -91,8 +108,8 @@ def modify( bid, name=None, cur_epi=None, on_air_day=None, chk_key=None ):
         if on_air_day:
             bgm.on_air_day = int(on_air_day)
 
-        if chk_key:
-            bgm.chk_key = chk_key
+        if seeker:
+            bgm.seeker = json_dump(seeker)
 
         bgm.save()
         return 1
@@ -112,7 +129,7 @@ def remove(bid):
     finally:
         db.close()
 
-def plus( bid ):
+def increase( bid ):
     db.connect()
     try:
         bgm = Bangumi.get(Bangumi.id==bid)
