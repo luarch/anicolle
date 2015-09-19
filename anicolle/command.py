@@ -5,6 +5,26 @@ from . import webui
 import os
 from .arg_parser import parse_args
 
+def setSeekerData():
+    r = [];
+    print("设置检查器")
+    while True:
+        print("选择检查器类型(输入-1结束): ")
+        for seeker_index, seeker_name in enumerate(ac.seeker.keys()):
+            print("\t", seeker_index, "\t", seeker_name)
+        user_selected_seeker_idx = int(input("请选择: "))
+        if user_selected_seeker_idx < 0:
+            break
+        try:
+            user_selected_seeker_name = list(ac.seeker.keys())[user_selected_seeker_idx];
+        except IndexError:
+            print("没有找到指定的检查器，请重试")
+            continue
+        user_input_chk_key = input("请输入检查关键字: ")
+        r_i = { 'seeker': user_selected_seeker_name, 'chk_key': user_input_chk_key }
+        r.append(r_i)
+    return r;
+
 def main():
     args = parse_args()
     ac.dbInit()
@@ -24,7 +44,7 @@ def main():
                     n[nc_key[i]] = 0
                 else:
                     n[nc_key[i]] = ''
-        ac.add( **n )
+        ac.create( **n )
     elif args.modify:
         nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )
         nc_key = ("bid", "name", "cur_epi", "on_air_day", "chk_key")
@@ -56,7 +76,7 @@ def main():
             print( "确定向%s(%d)加一吗？(Y/n)" % (n['name'], n['cur_epi'] ) )
             c = str(input())
             if c=='' or c=='Y' or c=='y':
-                ac.plus( args.plus )
+                ac.increase( args.plus )
                 print( "%s 已加一为 %d" % (n['name'], n['cur_epi']+1 ) )
         else:
             print( "错误: 未找到指定番组" )
