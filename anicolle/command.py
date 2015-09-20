@@ -30,11 +30,11 @@ def main():
     ac.dbInit()
 
     if args.add:
-        nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )
-        nc_key = ("id", "name", "cur_epi", "on_air_day", "chk_key")
+        nc = ( "ID", "名称", "看到", "上映时间" )
+        nc_key = ("id", "name", "cur_epi", "on_air_day")
         print( "正在添加番组" )
         n = {}
-        for i in range(1, 5):
+        for i in range(1, 4):
             print( "%s: " % ( nc[i], ) )
             c = str(input())
             if not c=='':
@@ -44,21 +44,23 @@ def main():
                     n[nc_key[i]] = 0
                 else:
                     n[nc_key[i]] = ''
+        n['seeker'] = setSeekerData()
         ac.create( **n )
     elif args.modify:
-        nc = ( "ID", "名称", "看到", "上映时间", "检查关键字" )
-        nc_key = ("bid", "name", "cur_epi", "on_air_day", "chk_key")
+        nc = ( "ID", "名称", "看到", "上映时间" )
+        nc_key = ("bid", "name", "cur_epi", "on_air_day")
         n = ac.getAni( args.modify )
         t = { 'bid': args.modify }
         if not n:
             print( "错误: 未找到指定番组" )
             exit()
         print( "您正在修改%s的信息" % (n['name'], ) )
-        for i in range(1, 5):
+        for i in range(1, 4):
             print( "%s: (回车默认 %s )" % (nc[i], str(n[nc_key[i]])) )
             c = str(input())
             if not c=='':
                 t[nc_key[i]] = c
+        t['seeker'] = setSeekerData()
         ac.modify( **t )
     elif args.remove:
         n = ac.getAni( args.remove )
@@ -91,6 +93,7 @@ def main():
         else:
             print( "错误: 未找到指定番组" )
     elif args.chkup:
+        # TODO Need to be reconstructured.
         if args.chkup>0:
             n = ac.getAni( args.chkup )
             if n:
