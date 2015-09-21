@@ -14,7 +14,7 @@ from peewee import *
 from .seeker import seeker
 from .config import config
 import os
-from json import loads as json_loads, dump as json_dump
+from json import loads as json_loads, dumps as json_dump
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -59,7 +59,7 @@ class Bangumi(Model):
             'cur_epi': self.cur_epi,
             'on_air_epi': self.on_air_epi,
             'on_air_day': self.on_air_day,
-            'chk_key': self.chk_key
+            'seeker': self.seeker
         }
 
 def dbInit():
@@ -172,6 +172,10 @@ def chkup( bid ):
 
         for seeker_seed in bgm_seeker_data:
             r.append(seeker[seeker_seed['seeker']].seek(seeker_seed['chk_key'], bgm.cur_epi))    # Maybe we need some new names. This can be confusable.
+            if not r[-1]:
+                r.pop()
+            else:
+                r[-1]['seeker'] = seeker_seed['seeker']
 
         return r
 

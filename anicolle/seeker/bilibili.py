@@ -10,13 +10,16 @@ def seek(chk_key, cur_epi):
     html_content = requests.get(query_url).text
     bs = BeautifulSoup(html_content, "html.parser")
     s_bgmlist = bs.find('div', class_="s_bgmlist")
-    season_id = s_bgmlist.get('data-seasonid')
+    try:
+        season_id = s_bgmlist.get('data-seasonid')
+    except AttributeError:
+        return {}
 
     api_url = "http://app.bilibili.com/bangumi/seasoninfo/%s.ver?callback=episodeJsonCallback" % (season_id,)
     apiRes = requests.get(api_url).text
     apiRes = apiRes[20:]
     apiRes = apiRes[:-1]
-    print(apiRes)
+    #print(apiRes)
     apiRes = loads(apiRes)
     epi_list = apiRes['result']['episodes']
     epi_list.reverse()

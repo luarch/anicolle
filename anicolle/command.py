@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 from . import core as ac
 from . import webui
-import os
 from .arg_parser import parse_args
 
 def setSeekerData():
     r = [];
     print("设置检查器")
     while True:
-        print("选择检查器类型(输入-1结束): ")
+        print("选择检查器类型(输入-1或回车结束): ")
         for seeker_index, seeker_name in enumerate(ac.seeker.keys()):
             print("\t", seeker_index, "\t", seeker_name)
         user_selected_seeker_idx = int(input("请选择: "))
-        if user_selected_seeker_idx < 0:
+        if user_selected_seeker_idx < 0 or not user_selected_seeker_idx:
             break
         try:
             user_selected_seeker_name = list(ac.seeker.keys())[user_selected_seeker_idx];
@@ -24,6 +23,16 @@ def setSeekerData():
         r_i = { 'seeker': user_selected_seeker_name, 'chk_key': user_input_chk_key }
         r.append(r_i)
     return r;
+
+def showSeekerData(bid):
+    r = ac.chkup(bid)
+    if not r:
+        raise LookupError
+        return 0
+
+    for item in r:
+        print("[%s] %s\n%s\n" % (item['seeker'], item['magname'], item['maglink']))
+    return 1
 
 def main():
     args = parse_args()
@@ -99,10 +108,7 @@ def main():
             if n:
                 print( "查找 %s 的第 %d 集资源" % (n['name'], n['cur_epi']+1) )
                 try:
-                    r = ac.chkup(args.chkup)
-                    print("%s\n%s"%(r['magname'], r['maglink']))
-                    if os.system('echo "%s" | xclip -in -selection clipboard'%r['maglink']) == 0:
-                        print("磁力链接已拷贝到剪贴板")
+                    showSeekerData(n['id'])
                 except NameError:
                     print( "ERR: specified bgm not found." )
                 except LookupError:
@@ -111,24 +117,15 @@ def main():
             print( "查找所有资源" )
             n = ac.getAni()
             i = 0
-            mls = []
             for row in n:
                 try:
-                    r = ac.chkup(row['id'])
+                    if showSeekerData(n['id']):
+                        i = i+1
                 except:
                     continue
                     pass
-                else:
-                    if r:
-                        print( "%-3d %s\n有更新: %s\n" % (row['id'], row['name'], r['magname']) )
-                        mls.append(r['maglink'])
-                        i = i+1
-            if not i:
-                print( "没有找到有更新的资源" )
             else:
                 print( "%d个资源有更新" % i )
-                if os.system('echo -e "%s" | xclip -in -selection clipboard'%( '\n'.join(mls), )) == 0:
-                    print("磁力链接已拷贝到剪贴板")
     elif args.webui:
         webui.start();
         pass
