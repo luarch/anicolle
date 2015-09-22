@@ -1,9 +1,56 @@
 var eid = -1;
 var bgmEditorTpl =
-    '<div class="bgm-editor"><form><div class="row"><div class="one-half column"><label for="bgmName">番剧名称</label><input type="text" id="bgmName" class="u-full-width" value="{{bgmTitle}}"></div><div class="three columns"><label for="bgmCurEpi">已看到</label><input type="number" id="bgmCurEpi" class="u-full-width" value="{{bgmCurEpi}}"></div><div class="three columns"><label for="bgmOnAir">更新于</label><select id="bgmOnAir" class="u-full-width"><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="7">周日</option><option value="9">不定期</option><option value="0">已完结</option></select></div></div><div class="row"><label for="bgmChkkey">更新检索关键词 (通过 漫游BT服务器)</label><input type="text" id="bgmChkkey" class="u-full-width" value="{{bgmChkKey}}"></div><a href="javascript:void(0)" class="button button-primary" onclick="doModify({{bgmBid}})">保存</a> <a href="javascript:void(0)" class="button" onclick="doRemove({{bgmBid}})">删除</a> <a href="javascript:void(0)" class="button" onclick="hideBgmEditor()">取消</a></form></div>';
+    '\
+<div class="bgm-editor">\
+    <form>\
+        <div class="row">\
+            <div class="one-half column">\
+                <label for="bgmName">番剧名称</label>\
+                <input type="text" id="bgmName" class="u-full-width" value="{{bgmTitle}}">\
+            </div>\
+            <div class="three columns">\
+                <label for="bgmCurEpi">已看到</label>\
+                <input type="number" id="bgmCurEpi" class="u-full-width" value="{{bgmCurEpi}}">\
+            </div>\
+            <div class="three columns">\
+                <label for="bgmOnAir">更新于</label>\
+                <select id="bgmOnAir" class="u-full-width">\
+                    <option value="1">周一</option>\
+                    <option value="2">周二</option>\
+                    <option value="3">周三</option>\
+                    <option value="4">周四</option>\
+                    <option value="5">周五</option>\
+                    <option value="6">周六</option>\
+                    <option value="7">周日</option>\
+                    <option value="9">不定期</option>\
+                    <option value="0">已完结</option>\
+                </select>\
+            </div>\
+        </div>\
+        <div class="row bgm-seeker-editor-ctn">\
+          <h5>设置检查器</h5>\
+        </div><a href="javascript:void(0)" class="button button-primary" onclick="doModify({{bgmBid}})">保存</a> <a href="javascript:void(0)" class="button" onclick="doRemove({{bgmBid}})">删除</a> <a href="javascript:void(0)" class="button" onclick="hideBgmEditor()">取消</a>\
+    </form>\
+</div>\
+    ';
 
 var bgmRowTpl =
     '<div class="row bgm-row" style="margin-top: 50px" data-bid="{{bgmBid}}" data-onair="{{bgmOnAirCode}}"><div class="two-thirds column"><h3><small>[{{bgmOnAir}}]</small> <a href="javascript:void(0)" class="bgm-title">{{bgmTitle}} (<span class="cur-epi">{{bgmCurEpi}}</span>)</a></h3></div><div class="one-third column bgm-action"><a class="button button-primary" href="javascript:void(0)" onclick="doPlus({{bgmBid}})">+1</a> <a class="button" href="javascript:void(0)" onclick="doDecrease({{bgmBid}})">-1</a> <a class="button" href="javascript:void(0)" onclick="doChk({{bgmBid}})">检查</a></div></div>';
+
+var bgmSeekerEditorTpl =
+    '<div class="row bgm-seeker-editor" data-id="{{seekerIdx}}">\
+        <h6>{{seekerName}} 检查器</h6>\
+        <label>检查关键字 <input type="text" value="{{seekerChkKey}}" /></label>\
+    </div>';
+
+var bgmChkModalTpl =
+    '\
+    <div class="bgm-chk-modal">\
+        <h3>{{ChkStatus}}</h3>\
+    </div>\
+    ';
+
+var seekers = [];
 
 anicolle = {
 
@@ -14,7 +61,16 @@ anicolle = {
         decrease: "/action/decrease/",
         add: "/action/add",
         remove: "/action/remove/",
-        chkup: "/action/chkup/"
+        chkup: "/action/chkup/",
+        getSeekers: "/action/get_seekers/"
+    },
+
+    getSeekers: function() {
+        return $.ajax({
+            url: this.urls.getSeekers,
+            type: "GET",
+            dataType: "json"
+        })
     },
 
     getAni: function(bid){
@@ -41,21 +97,21 @@ anicolle = {
         });
     },
 
-    modify: function( bid, name, cur_epi, on_air, chk_key ) {
+    modify: function( bid, name, cur_epi, on_air, seeker) {
         return $.ajax({
             url: this.urls.modify + bid,
             type: "POST",
             data: { "name": name, "cur_epi": cur_epi,
-                    "on_air": on_air, "chk_key": chk_key }
+                    "on_air": on_air, "seeker": JSON.stringify(seeker)}
         });
     },
 
-    add: function( name, cur_epi, on_air, chk_key ) {
+    add: function( name, cur_epi, on_air, seeker ) {
         return $.ajax({
             url: this.urls.add,
             type: "POST",
             data: { "name": name, "cur_epi": cur_epi,
-                    "on_air": on_air, "chk_key": chk_key }
+                    "on_air": on_air, "seeker": JSON.stringify(seeker)}
         });
     },
 
@@ -84,8 +140,15 @@ function showBgmEditor(obj) {
             beh = beh.replace(/{{bgmBid}}/g, data['id']);
             beh = beh.replace(/{{bgmTitle}}/g, escapeQuote(data['name']));
             beh = beh.replace(/{{bgmCurEpi}}/g, data['cur_epi']);
-            beh = beh.replace(/{{bgmChkKey}}/g, escapeQuote(data['chk_key']));
             $(obj).append(beh);
+            var data_seeker = JSON.parse(data['seeker']);;
+            seekers.forEach(function(item, index){
+                var bseh = bgmSeekerEditorTpl;
+                bseh = bseh.replace(/{{seekerIdx}}/g, index);
+                bseh = bseh.replace(/{{seekerName}}/g, item);
+                bseh = bseh.replace(/{{seekerChkKey}}/g, getChkkeyFromSeekerData(data_seeker, item));
+                $('.bgm-seeker-editor-ctn').append(bseh);
+            });
             $(".bgm-editor select option[value="+data[3]+"]").attr("selected", true);
         });
     } else {
@@ -94,6 +157,13 @@ function showBgmEditor(obj) {
         beh = beh.replace(/{{bgmCurEpi}}/g, "");
         beh = beh.replace(/{{bgmChkKey}}/g, "");
         $(obj).append(beh);
+        seekers.forEach(function(item, index){
+            var bseh = bgmSeekerEditorTpl;
+            bseh = bseh.replace(/{{seekerIdx}}/g, index);
+            bseh = bseh.replace(/{{seekerName}}/g, item);
+                bseh = bseh.replace(/{{seekerChkKey}}/g, "");
+            $('.bgm-seeker-editor-ctn').append(bseh);
+        });
         $(".bgm-editor select option[value=0]").attr("selected", true);
         $(".bgm-editor a.button:eq(1)").remove();
     }
@@ -163,7 +233,7 @@ function doModify(bid) {
         doAdd();
         return;
     }
-    var r = anicolle.modify( bid, $("#bgmName").val(), $("#bgmCurEpi").val(), $("#bgmOnAir").val(), $("#bgmChkkey").val() );
+    var r = anicolle.modify( bid, $("#bgmName").val(), $("#bgmCurEpi").val(), $("#bgmOnAir").val(), getBgmSeekerInput() );
     r.done(function(){
         hideBgmEditor();
         showBgm();
@@ -171,7 +241,7 @@ function doModify(bid) {
 }
 
 function doAdd() {
-    var r = anicolle.add( $("#bgmName").val(), $("#bgmCurEpi").val(), $("#bgmOnAir").val(), $("#bgmChkkey").val() );
+    var r = anicolle.add( $("#bgmName").val(), $("#bgmCurEpi").val(), $("#bgmOnAir").val(), getBgmSeekerInput() );
     r.done(function(){
         hideBgmEditor();
         showBgm();
@@ -192,14 +262,32 @@ function doChk(bid) {
     obj = $(obj).find('.button:eq(2)');
     $(obj).text("检查中...");
     var r = anicolle.chkup( bid );
+    var bcmh = bgmChkModalTpl;
     r.done(function(data){
         $(obj).text("检查");
         if( data ) {
-            prompt("找到更新 " + data.magname, data.maglink);
+            //prompt("找到更新 " + data.magname, data.maglink);
+            bcmh = bcmh.replace(/{{ChkStatus}}/, "找到更新");
         } else {
-            alert("未发现更新");
+            bcmh = bcmh.replace(/{{ChkStatus}}/, "未找到更新");
         }
+        $('body').append(bcmh);
+        if(data) {
+            data.forEach(function(item){
+             $('.bgm-chk-modal').append("<h6><a href='" + item['maglink'] + "' target='_blank'>" + item['magname'] + "</a></h6>" )
+                .append("<input type='text' onclick='this.select()' value='" + item['maglink'] + "' />")
+            });
+        }
+        $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="hideChkModal()">关闭</a></div>')
+        $('.body-hover').fadeIn();
+    }).fail(function(){
+         $(obj).text("检查失败");
     });
+}
+
+function hideChkModal() {
+     $('.bgm-chk-modal').remove();
+     $('.body-hover').fadeOut();
 }
 
 function initSearch() {
@@ -229,6 +317,9 @@ function initSearch() {
 }
 
 $(document).ready(function(){
+    anicolle.getSeekers().done(function(data){
+         seekers = data;
+    });
     showBgm();
     initSearch();
 });
@@ -243,4 +334,31 @@ function getBid(obj) {
 
 function getObjByBid(bid) {
     return $('.bgm-row[data-bid=' + bid + ']');
+}
+
+function getChkkeyFromSeekerData(data, item) {
+    var r = "";
+    data.every(function(seeker){
+        if (seeker['seeker']==item) {
+            r = seeker['chk_key'];
+            return 0;
+        }
+        return 1;
+    });
+    return r;
+}
+
+function getBgmSeekerInput() {
+    var r = [];
+    $(".bgm-seeker-editor").each(function(){
+        var seekerName = seekers[parseInt($(this).attr('data-id'))];
+        var chkkey = $(this).find('input').val();
+        if(chkkey) {
+            r.push({
+                'seeker': seekerName,
+                'chk_key': chkkey
+            });
+        }
+    });
+    return r;
 }

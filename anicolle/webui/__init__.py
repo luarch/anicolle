@@ -38,7 +38,7 @@ def getBgm( bid ):
 @app.route("/action/plus/<bid>")
 @auth_basic(user_auth)
 def plus( bid ):
-    core.plus(bid)
+    core.increase(bid)
 
 @app.route("/action/decrease/<bid>")
 @auth_basic(user_auth)
@@ -51,8 +51,8 @@ def modify( bid ):
     name = request.forms.name
     cur_epi = request.forms.cur_epi
     on_air = request.forms.on_air
-    chk_key = request.forms.chk_key
-    core.modify( bid, name, cur_epi, on_air, chk_key )
+    seeker = json.loads(request.forms.seeker)
+    core.modify( bid, name, cur_epi, on_air, seeker )
 
 @app.post("/action/add")
 @auth_basic(user_auth)
@@ -60,8 +60,8 @@ def add():
     name = request.forms.name
     cur_epi = request.forms.cur_epi
     on_air = request.forms.on_air
-    chk_key = request.forms.chk_key
-    core.add( name, cur_epi, on_air, chk_key )
+    seeker = json.loads(request.forms.seeker)
+    core.create ( name, cur_epi, on_air, seeker )
 
 @app.route("/action/remove/<bid>")
 @auth_basic(user_auth)
@@ -72,6 +72,11 @@ def remove(bid):
 @auth_basic(user_auth)
 def chkup(bid):
     return json.dumps( core.chkup(bid) );
+
+@app.route("/action/get_seekers/")
+@auth_basic(user_auth)
+def getSeekers():
+    return json.dumps(list(core.seeker.keys()));
 
 def start(port=core.config.SERVER_PORT):
     print("Running with ", core.run_mode, " mode.")
