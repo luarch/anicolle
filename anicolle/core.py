@@ -80,7 +80,7 @@ def getAni( bid=-1, on_air_day=-1 ):
                 r.append(bgm.to_dict())
         else:
             # get all records
-            for bgm in Bangumi.select():
+            for bgm in Bangumi.select().order_by(Bangumi.on_air_day):
                 r.append(bgm.to_dict())
         return r
     except Bangumi.DoesNotExist:
