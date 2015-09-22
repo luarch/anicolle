@@ -265,7 +265,7 @@ function doChk(bid) {
     var bcmh = bgmChkModalTpl;
     r.done(function(data){
         $(obj).text("检查");
-        if( data ) {
+        if( data.length ) {
             //prompt("找到更新 " + data.magname, data.maglink);
             bcmh = bcmh.replace(/{{ChkStatus}}/, "找到更新");
         } else {
