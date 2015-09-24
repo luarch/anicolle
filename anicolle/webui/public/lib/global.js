@@ -266,7 +266,6 @@ function doChk(bid) {
     r.done(function(data){
         $(obj).text("检查");
         if( data.length ) {
-            //prompt("找到更新 " + data.magname, data.maglink);
             bcmh = bcmh.replace(/{{ChkStatus}}/, "找到更新");
         } else {
             bcmh = bcmh.replace(/{{ChkStatus}}/, "未找到更新");
@@ -274,7 +273,7 @@ function doChk(bid) {
         $('body').append(bcmh);
         if(data) {
             data.forEach(function(item){
-             $('.bgm-chk-modal').append("<h6><a href='" + item['maglink'] + "' target='_blank'>" + item['magname'] + "</a></h6>" )
+             $('.bgm-chk-modal').append("<h6><a href='" + item['link'] + "' target='_blank'>" + item['title'] + "</a></h6>" )
                 .append("<input type='text' onclick='this.select()' value='" + item['maglink'] + "' />")
             });
         }

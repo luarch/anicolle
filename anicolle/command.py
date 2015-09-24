@@ -31,7 +31,7 @@ def showSeekerData(bid):
         return 0
 
     for item in r:
-        print("[%s] %s\n%s\n" % (item['seeker'], item['magname'], item['maglink']))
+        print("[%s] %s\n%s\n" % (item['seeker'], item['title'], item['link']))
     return 1
 
 def main():

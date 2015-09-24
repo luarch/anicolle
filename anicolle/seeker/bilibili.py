@@ -39,8 +39,8 @@ def seek(chk_key, cur_epi):
     except IndexError:
         return 0
 
-    maglink = "http://www.bilibili.com/video/av%s/index_%s.html" % (av_id, av_page)
-    magname = "%s - %d from Bilibili" % (av_name, tepi)
+    link = "http://www.bilibili.com/video/av%s/index_%s.html" % (av_id, av_page)
+    title = "%s - %d from Bilibili" % (av_name, tepi)
 
-    return {'maglink': maglink, 'magname': magname}
+    return {'link': link, 'title': title}
 
