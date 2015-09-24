@@ -274,7 +274,7 @@ function doChk(bid) {
         if(data) {
             data.forEach(function(item){
              $('.bgm-chk-modal').append("<h6><a href='" + item['link'] + "' target='_blank'>" + item['title'] + "</a></h6>" )
-                .append("<input type='text' onclick='this.select()' value='" + item['maglink'] + "' />")
+                .append("<input type='text' onclick='this.select()' value='" + item['link'] + "' />")
             });
         }
         $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="hideChkModal()">关闭</a></div>')
