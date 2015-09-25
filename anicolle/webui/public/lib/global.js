@@ -149,7 +149,7 @@ function showBgmEditor(obj) {
                 bseh = bseh.replace(/{{seekerChkKey}}/g, getChkkeyFromSeekerData(data_seeker, item));
                 $('.bgm-seeker-editor-ctn').append(bseh);
             });
-            $(".bgm-editor select option[value="+data[3]+"]").attr("selected", true);
+            $(".bgm-editor select option[value="+data['on_air_day']+"]").attr("selected", true);
         });
     } else {
         beh = beh.replace(/{{bgmBid}}/g, 0);
