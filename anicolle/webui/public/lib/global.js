@@ -1,4 +1,5 @@
 var eid = -1;
+var chk_on_going = 0;
 var bgmEditorTpl =
     '\
 <div class="bgm-editor">\
@@ -258,7 +259,12 @@ function doRemove(bid) {
 }
 
 function doChk(bid) {
+    if(chk_on_going) {
+         return;
+    }
+    $(".bgm-action").find(".button:eq(2)").addClass("disabled");
     obj = getObjByBid(bid);
+    chk_on_going = 1;
     obj = $(obj).find('.button:eq(2)');
     $(obj).text("检查中...");
     var r = anicolle.chkup( bid );
@@ -279,8 +285,12 @@ function doChk(bid) {
         }
         $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="hideChkModal()">关闭</a></div>')
         $('.body-hover').fadeIn();
+        chk_on_going = 0;
+        $(".bgm-action").find(".button:eq(2)").removeClass("disabled");
     }).fail(function(){
          $(obj).text("检查失败");
+        chk_on_going = 0;
+        $(".bgm-action").find(".button:eq(2)").removeClass("disabled");
     });
 }
 
