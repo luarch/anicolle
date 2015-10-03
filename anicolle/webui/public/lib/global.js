@@ -294,6 +294,54 @@ function doChk(bid) {
     });
 }
 
+function doChkAll(){
+    if(chk_on_going) {
+         return;
+    }
+    $(".bgm-action").find(".button:eq(2)").addClass("disabled");
+    chk_on_going = 1;
+    var bcmh = bgmChkModalTpl;
+    bcmh = bcmh.replace(/{{ChkStatus}}/, "检查中...");
+    $('body').append(bcmh);
+    $('.body-hover').fadeIn();
+
+
+    var bcount = 0;
+    var bccount =0;
+
+    (
+        function(){
+            $('.bgm-row').each(function(){
+                bcount++;
+                var bid = $(this).attr('data-bid');
+                var btitle = $(this).find('.bgm-title').text()
+                var r = anicolle.chkup(bid);
+                r.done(function (data) {
+                    bccount++;
+                    if(data) {
+                        $('.bgm-chk-modal').append('<h4>' + btitle + '</h4>');
+                         data.forEach(function (item) {
+                             $('.bgm-chk-modal').append("<h6><a href='" + item['link'] + "' target='_blank'>" + item['title'] + "</a></h6>" )
+                                .append("<input type='text' onclick='this.select()' value='" + item['link'] + "' />")
+                         });
+                    }
+                });
+            });
+
+        }
+    )();
+
+    var si = setInterval(function(){
+        if(bcount<=bccount) {
+            $('.bgm-chk-modal h3').text('所有番剧检查完成');
+            $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="hideChkModal()">关闭</a></div>');
+            chk_on_going = 0;
+            $(".bgm-action").find(".button:eq(2)").removeClass("disabled");
+            clearInterval(si);
+        }
+    }, 200);
+}
+
 function hideChkModal() {
      $('.bgm-chk-modal').remove();
      $('.body-hover').fadeOut();

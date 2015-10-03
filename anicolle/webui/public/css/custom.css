@@ -49,6 +49,8 @@ a.bgm-title {
      box-sizing: border-box;
      background: rgba(255, 255, 255, 0.8);
      z-index: 5;
+     max-height: 80%;
+     overflow-y: auto;
 }
 
 .bgm-chk-modal h6 a {
