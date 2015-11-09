@@ -3,6 +3,8 @@
 - 何これ？
 - アニコレ！ ٩(๑´3｀๑)۶
 
+![AniColle](https://github.com/chienius/anicolle/raw/master/anicolle_logo.png)
+
 两年前(?)开的大坑，现在以另一种形式补起来。
 
 这个程序主要用来收藏用户现在正在收看的番剧，并提供更新检测功能。
