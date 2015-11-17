@@ -278,10 +278,14 @@ function doChk(bid) {
         }
         $('body').append(bcmh);
         if(data) {
+            var c = 0
             data.forEach(function(item){
-             $('.bgm-chk-modal').append("<h6><a href='" + item['link'] + "' target='_blank'>" + item['title'] + "</a></h6>" )
-                .append("<input type='text' onclick='this.select()' value='" + item['link'] + "' />")
+                c++;
+                 $('.bgm-chk-modal').append("<h6><a href='" + item['link'] + "' target='_blank'>" + item['title'] + "</a></h6>" )
+                    .append("<input type='text' onclick='this.select()' value='" + item['link'] + "' />")
             });
+            if(c)
+                $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="doPlus('+bid+'), hideChkModal()">关闭并+1</a></div>');
         }
         $('.bgm-chk-modal').append('<div><a href="javascript:void()" onclick="hideChkModal()">关闭</a></div>')
         $('.body-hover').fadeIn();
