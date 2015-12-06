@@ -20,11 +20,11 @@ session_opts = {
 app_s = SessionMiddleware(app, session_opts)
 
 def auth(callback):
-    def decorator():
+    def decorator(*args, **kwargs):
         s = request.environ.get('beaker.session')
         if (not 'token' in  s) or s['token']!=auth_token:
             return redirect('/login')
-        r = callback()
+        r = callback(*args, **kwargs)
         return r
     return decorator
 
