@@ -13,7 +13,7 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png">
 
   <!-- FONT
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
