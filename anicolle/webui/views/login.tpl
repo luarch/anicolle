@@ -27,52 +27,20 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <!-- <link rel="icon" type="image/png" href="images/favicon.png"> -->
 
-  <!-- Scripts
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script src="/static/lib/jquery.min.js"></script>
-  <script src="/static/lib/global.js"></script>
-
 </head>
 <body>
-  <div class="body-hover"></div>
-
-  <!-- Primary Page Layout
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <div class="container">
     <div class="row action-row" style="margin-top: 10%">
       <div class="one-half column">
         <h4>AniColle</h4>
-        <input type="text" placeholder="搜索...">
+        <form action="" method="post" accept-charset="utf-8">
+            <input type="password" name="token" placeholder="TOKEN">
+            <input type="submit" class="button button-primary" style="width:10.0rem" value="登录"/>
+        </form>
       </div>
       <div class="one-half column">
           <p style="margin-top: 2.0rem; margin-bottom: 0.5rem"><small>服务器 <b ><i>{{hostname}}</i></b></small></p>
-          <a href="javascript:void(0)" onclick="doChkAll()" class="button button-primary" style="width:20.4rem">检查全部</a>
-          <br>
-          <a href="/logout" class="button" style="width:20.4rem">退出</a>
       </div>
     </div>
-
-    <div class="row bgm-row" style="margin-top: 50px" data-bid="0">
-        <div class="two-thirds column">
-            <h3>
-                <a href="javascript:void(0)">正在加载...</a>
-            </h3>
-        </div>
-    </div>
-
-    <div class="row plus-row" style="margin-top: 50px">
-        <div class="two-thirds column">
-            <h3><a href="javascript:void(0)" class="bgm-title">[ + ]</a></h3>
-        </div>
-    </div>
-
-    <div class="row" style="font-size: small; text-align: right; color: #555;">
-        <p>Presented by Chienius with &hearts;.</p>
-    </div>
-
   </div>
-
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
-</html>

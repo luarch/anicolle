@@ -2,51 +2,87 @@
 from .. import core as core
 import json
 from socket import gethostname
-from bottle import route, run, auth_basic, template, request, static_file, Bottle, TEMPLATE_PATH
+from bottle import run, template, request, static_file, Bottle, redirect, TEMPLATE_PATH
+from beaker.middleware import SessionMiddleware
 
 app = Bottle()
 workDir = "./anicolle/webui/"
 TEMPLATE_PATH.append(workDir+"views")
-auth_user = core.config.AUTH_USER
-auth_passwd = core.config.AUTH_PASSWD
+auth_token = core.config.AUTH_TOKEN
 
-def user_auth( user, passwd  ):
-    if user == auth_user and passwd == auth_passwd:
-        return True
-    return False
+session_opts = {
+    'session.type': 'file',
+    'session.cookie_expires': 300,
+    'session.data_dir': './data',
+    'session.auto': True
+}
+
+app_s = SessionMiddleware(app, session_opts)
+
+def auth(callback):
+    def decorator():
+        s = request.environ.get('beaker.session')
+        if (not 'token' in  s) or s['token']!=auth_token:
+            return redirect('/login')
+        r = callback()
+        return r
+    return decorator
+
 
 @app.route("/static/<path:path>")
 def static(path):
     return static_file( path, root=workDir+'public' );
 
 @app.route("/")
-@auth_basic(user_auth)
+@auth
 def home():
     return template("home", hostname = gethostname().upper() )
 
+@app.get('/login')
+def getLogin():
+    return template("login", hostname = gethostname().upper())
+
+@app.post('/login')
+def postLogin():
+    if(request.forms.token == auth_token) :
+        s = request.environ.get('beaker.session')
+        s['token'] = request.forms.token
+        s.save()
+        return redirect('/')
+    else:
+        print("[WARN] Failed to login with wrong token '", request.forms.token, "'")
+        return redirect('login')
+
+@app.get('/logout')
+def getLogout():
+        s = request.environ.get('beaker.session')
+        s.delete()
+        s.save()
+        return redirect('/')
+
 @app.route("/action/get/")
 @app.route("/action/get")
-@auth_basic(user_auth)
+@auth
 def getAllBgm():
     return json.dumps( core.getAni() )
 
 @app.route("/action/get/<bid>")
-@auth_basic(user_auth)
+@auth
 def getBgm( bid ):
     return json.dumps( core.getAni(int(bid)) )
 
 @app.route("/action/plus/<bid>")
-@auth_basic(user_auth)
+@auth
 def plus( bid ):
     core.increase(bid)
 
 @app.route("/action/decrease/<bid>")
-@auth_basic(user_auth)
+@auth
 def decrease( bid ):
     core.decrease(bid)
 
 @app.post("/action/modify/<bid>")
-@auth_basic(user_auth)
+@auth
 def modify( bid ):
     name = request.forms.name
     cur_epi = request.forms.cur_epi
@@ -55,7 +91,7 @@ def modify( bid ):
     core.modify( bid, name, cur_epi, on_air, seeker )
 
 @app.post("/action/add")
-@auth_basic(user_auth)
+@auth
 def add():
     name = request.forms.name
     cur_epi = request.forms.cur_epi
@@ -64,21 +100,21 @@ def add():
     core.create ( name, cur_epi, on_air, seeker )
 
 @app.route("/action/remove/<bid>")
-@auth_basic(user_auth)
+@auth
 def remove(bid):
     core.remove( bid );
 
 @app.route("/action/chkup/<bid>")
-@auth_basic(user_auth)
+@auth
 def chkup(bid):
     return json.dumps( core.chkup(bid) );
 
 @app.route("/action/get_seekers/")
-@auth_basic(user_auth)
+@auth
 def getSeekers():
     return json.dumps(list(core.seeker.keys()));
 
 def start(port=core.config.SERVER_PORT):
     print("Running with ", core.run_mode, " mode.")
     port = int(port)
-    run(app, host=core.config.SERVER_HOST, port=port, debug=core.config.DEBUG)
+    run(app_s, host=core.config.SERVER_HOST, port=port, debug=core.config.DEBUG)

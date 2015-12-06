@@ -1,14 +1,12 @@
 class Config:
     DATABASE = "anicolle.db"
-    AUTH_USER = "demo"
-    AUTH_PASSWD = "password"
+    AUTH_TOKEN = "test"
     DEBUG = True
     SERVER_HOST = "127.0.0.1"
     SERVER_PORT = "7777"
 
 class ProductionConfig(Config):
-    AUTH_USER = "YOUR_USER"
-    AUTH_PASSWD = "YOUR_PASSWORD"
+    AUTH_TOKEN = "YOUR_TOKEN"
     DEBUG = False
     SERVER_HOST = "0.0.0.0"
     SERVER_PORT = "7777"
