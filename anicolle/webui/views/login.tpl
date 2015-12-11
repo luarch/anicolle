@@ -36,7 +36,7 @@
       <div class="one-half column">
         <h4>AniColle</h4>
         <form action="" method="post" accept-charset="utf-8">
-            <input type="password" name="token" placeholder="TOKEN">
+            <input type="password" name="token" autofocus placeholder="TOKEN">
             <input type="submit" class="button button-primary" style="width:10.0rem" value="登录"/>
         </form>
       </div>

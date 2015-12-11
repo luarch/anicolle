@@ -12,7 +12,7 @@ auth_token = core.config.AUTH_TOKEN
 
 session_opts = {
     'session.type': 'file',
-    'session.cookie_expires': 300,
+    'session.cookie_expires': False,
     'session.data_dir': './data',
     'session.auto': True
 }
