@@ -9,12 +9,12 @@ def seek(chk_key, cur_epi):
     try:
         int(chk_key)
     except ValueError:
-        query_url = "http://www.bilibili.com/search?keyword=%s&orderby=&type=series&tids=&tidsC=&arctype=all&page=1" % (chk_key, )
+        query_url = "http://search.bilibili.com/bangumi?keyword=%s" % (chk_key, )
         html_content = requests.get(query_url).text
         bs = BeautifulSoup(html_content, "html.parser")
-        s_bgmlist = bs.find('div', class_="s_bgmlist")
+        s_bgmlist = bs.find('div', class_="ajax-render")
         try:
-            season_id = s_bgmlist.get('data-seasonid')
+            season_id = s_bgmlist.find('div', class_="s-btn-sub").get('data-id')
         except AttributeError:
             return {}
     else:
@@ -23,7 +23,7 @@ def seek(chk_key, cur_epi):
     api_url = "http://app.bilibili.com/bangumi/seasoninfo/%s.ver?callback=episodeJsonCallback" % (season_id,)
     apiRes = requests.get(api_url).text
     apiRes = apiRes[20:]
-    apiRes = apiRes[:-1]
+    apiRes = apiRes[:-2]
     apiRes = loads(apiRes)
     epi_list = apiRes['result']['episodes']
 
