@@ -27,12 +27,13 @@ def seek(chk_key, cur_epi):
     apiRes = loads(apiRes)
     epi_list = apiRes['result']['episodes']
 
+    av_name = apiRes['result']['title']
+
     try:
         for epi in  epi_list:
             if epi['index'] == str(tepi):
                 av_id = epi['av_id']
                 av_page= epi['page']
-                av_name = epi['index_title']
                 break
         else:
             raise IndexError;
