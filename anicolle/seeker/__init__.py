@@ -1,7 +1,7 @@
-from . import popgo
 from . import bilibili
+from . import comicat
 
 seeker = {
-    'popgo': popgo,
+    'comicat': comicat,
     'bilibili': bilibili
 }
