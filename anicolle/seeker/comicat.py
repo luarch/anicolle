@@ -16,8 +16,6 @@ def seek(chk_key, cur_epi):
     # Find resource page
     title = ""
     resource_url = ""
-    # re1 = _re.compile( '%02d'%tepi + '[集话\]】\[]' )
-    re2 = _re.compile( '%02d'%tepi + '*' + '%02d'%tepi )
     bs = BeautifulSoup(r, "html.parser")
     table = bs.find(id='listTable')
     rows_with_link = table.find_all('tr')
