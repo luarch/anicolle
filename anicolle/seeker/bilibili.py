@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
 import requests
 from bs4 import BeautifulSoup
 from json import loads
+import re
 
 def seek(chk_key, cur_epi):
     tepi = cur_epi+1
@@ -14,9 +16,14 @@ def seek(chk_key, cur_epi):
         bs = BeautifulSoup(html_content, "html.parser")
         s_bgmlist = bs.find('div', class_="ajax-render")
         try:
-            season_id = s_bgmlist.find('div', class_="s-btn-sub").get('data-id')
+            season_id = s_bgmlist.find('a').get('href')
+            season_id = re.findall('\d+', season_id)
+            if len(season_id):
+                season_id = season_id[0]
+            else:
+                raise AttributeError
         except AttributeError:
-            return {}
+            return 0
     else:
         season_id = chk_key
 
@@ -45,3 +52,5 @@ def seek(chk_key, cur_epi):
 
     return {'link': link, 'title': title}
 
+if __name__ == '__main__':
+    seek("粗点心战争", 0)
