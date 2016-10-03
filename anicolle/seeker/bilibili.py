@@ -12,11 +12,11 @@ def seek(chk_key, cur_epi):
         int(chk_key)
     except ValueError:
         query_url = "http://search.bilibili.com/bangumi?keyword=%s" % (chk_key, )
-        html_content = requests.get(query_url).text
+        html_content = requests.get(query_url, timeout=2).text
         bs = BeautifulSoup(html_content, "html.parser")
         s_bgmlist = bs.find('div', class_="ajax-render")
         try:
-            season_id = s_bgmlist.find('a').get('href')
+            season_id = s_bgmlist.find('a', class_="title").get('href')
             season_id = re.findall('\d+', season_id)
             if len(season_id):
                 season_id = season_id[0]
@@ -27,17 +27,17 @@ def seek(chk_key, cur_epi):
     else:
         season_id = chk_key
 
-    api_url = "http://app.bilibili.com/bangumi/seasoninfo/%s.ver?callback=episodeJsonCallback" % (season_id,)
-    apiRes = requests.get(api_url).text
-    apiRes = apiRes[20:]
-    apiRes = apiRes[:-2]
+    api_url = "http://app.bilibili.com/bangumi/seasoninfo/%s.ver?callback=seasonListCallback" % (season_id,)
+    apiRes = requests.get(api_url, timeout=2).text
+    apiRes = re.sub("^.+?\(", '', apiRes)
+    apiRes = re.sub("\);", '', apiRes)
     apiRes = loads(apiRes)
     epi_list = apiRes['result']['episodes']
 
     av_name = apiRes['result']['title']
 
     try:
-        for epi in  epi_list:
+        for epi in epi_list:
             if epi['index'] == str(tepi):
                 av_id = epi['av_id']
                 av_page= epi['page']
@@ -50,7 +50,7 @@ def seek(chk_key, cur_epi):
     link = "http://www.bilibili.com/video/av%s/index_%s.html" % (av_id, av_page)
     title = "%s - %d from Bilibili" % (av_name, tepi)
 
-    return {'link': link, 'title': title}
+    return [{'link': link, 'title': title}]
 
 if __name__ == '__main__':
-    seek("粗点心战争", 0)
+    test_r = seek("食戟之灵 贰之皿", 10)

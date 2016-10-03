@@ -7,10 +7,10 @@ def seek(chk_key, cur_epi):
     # Compose search keyword
     tepi = cur_epi+1
     chk_key = str(chk_key)
-    chk_key = "%s-%02d" % (chk_key, tepi)
+    chk_key = "%s %02d" % (chk_key, tepi)
 
     # Get search result page
-    url = "http://www.comicat.org/rss-{}.xml".format(chk_key)
+    url = "https://share.dmhy.org/topics/rss/rss.xml?keyword={}".format(chk_key)
     r = requests.get(url, timeout=2)
     r.encoding = "utf-8"
 
@@ -26,7 +26,7 @@ def seek(chk_key, cur_epi):
         return r
 
 if __name__ == '__main__':
-    r = seek("【极影字幕社】 重装武器", 11)
+    r = seek("【极影字幕社】 重装武器", 9)
     if r:
         for i in r:
             print(i['title'])

@@ -172,11 +172,9 @@ def chkup( bid ):
 
         for seeker_seed in bgm_seeker_data:
             try:
-                r.append(seeker[seeker_seed['seeker']].seek(seeker_seed['chk_key'], bgm.cur_epi))    # Maybe we need some new names. This can be confusable.
-                if not r[-1]:
-                    r.pop()
-                else:
-                    r[-1]['seeker'] = seeker_seed['seeker']
+                seek_result = seeker[seeker_seed['seeker']].seek(seeker_seed['chk_key'], bgm.cur_epi) # Maybe we need some new names. This can be confusable.
+                if type(seek_result) == list:
+                    r = r+seek_result
             except KeyError:
                 print("[WARN] Seeker named", seeker_seed['seeker'] ,"not found. (Not registered?)")
 
