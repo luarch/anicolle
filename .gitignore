@@ -3,3 +3,4 @@ anicolle.db
 **.DS_Store
 data
 anicolle/config.py
+venv
