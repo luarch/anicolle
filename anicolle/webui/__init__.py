@@ -73,6 +73,7 @@ def getAllBgm():
 @app.route("/action/get/<bid>")
 @auth
 def getBgm( bid ):
+    response.content_type = 'application/json'
     return json.dumps( core.getAni(int(bid)) )
 
 @app.route("/action/plus/<bid>")
@@ -116,6 +117,7 @@ def chkup(bid):
 @app.route("/action/get_seekers/")
 @auth
 def getSeekers():
+    response.content_type = 'application/json'
     return json.dumps(list(core.seeker.keys()));
 
 def start(port=core.config.SERVER_PORT):
