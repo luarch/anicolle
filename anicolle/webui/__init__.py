@@ -23,9 +23,13 @@ def auth(callback):
     def decorator(*args, **kwargs):
         s = request.environ.get('beaker.session')
         if (not 'token' in  s) or s['token']!=auth_token:
-            return redirect('/login')
-        r = callback(*args, **kwargs)
-        return r
+            auth = request.get_header("auth_token")
+            if auth == auth_token:
+                return callback(*args, **kwargs)
+            else:
+                return redirect('/login')
+        else:
+            return callback(*args, **kwargs)
     return decorator
 
 
