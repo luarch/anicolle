@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import requests
-import re as _re
 import xml.etree.ElementTree as ET
 import urllib.parse
+
 
 def seek(chk_key, cur_epi):
     # Compose search keyword
@@ -12,7 +12,8 @@ def seek(chk_key, cur_epi):
     chk_key = urllib.parse.quote_plus(chk_key)
 
     # Get search result page
-    url = "https://www.nyaa.se/?page=rss&term={}".format(chk_key)
+    url = "https://nyaa.pantsu.cat/feed?c=_&s=0&limit=50\
+&userID=0&q={}".format(chk_key)
     r = requests.get(url, timeout=2)
     r.encoding = "utf-8"
 
@@ -20,12 +21,14 @@ def seek(chk_key, cur_epi):
 
     r = []
     for item in tree.iterfind("channel/item"):
-        r.append({"title": item.find("title").text, "link": item.find('link').text})
+        r.append({"title": item.find("title").text,
+                  "link": item.find('guid').text})
 
     if len(r) == 0:
         return 0
     else:
         return r
+
 
 if __name__ == '__main__':
     r = seek("All Out!! Ohys", 14)
