@@ -1,12 +1,19 @@
 #!/usr/bin/env python
-from .. import core as core
+from . import core as core
 import json
-from bottle import run, request
+from bottle import run, request, response
 from bottle import Bottle
 
 app = Bottle()
 workDir = "./anicolle/webui/"
 auth_token = core.config.AUTH_TOKEN
+
+
+def produceJson(callback):
+    def decorator(*args, **kwargs):
+        response.content_type = "application/json; charset=utf-8"
+        return callback(*args, **kwargs)
+    return decorator
 
 
 def auth(callback):
@@ -15,36 +22,39 @@ def auth(callback):
         if auth == auth_token:
             return callback(*args, **kwargs)
         else:
-            return 401
+            response.status = 401
+            return "Not authorized."
     return decorator
 
 
-@app.route("/action/get/")
-@app.route("/action/get")
+@app.route("/get/")
+@app.route("/get")
 @auth
+@produceJson
 def getAllBgm():
     return json.dumps(core.getAni())
 
 
-@app.route("/action/get/<bid>")
+@app.route("/get/<bid>")
 @auth
+@produceJson
 def getBgm(bid):
     return json.dumps(core.getAni(int(bid)))
 
 
-@app.route("/action/plus/<bid>")
+@app.route("/plus/<bid>")
 @auth
 def plus(bid):
     core.increase(bid)
 
 
-@app.route("/action/decrease/<bid>")
+@app.route("/decrease/<bid>")
 @auth
 def decrease(bid):
     core.decrease(bid)
 
 
-@app.post("/action/modify/<bid>")
+@app.post("/modify/<bid>")
 @auth
 def modify(bid):
     name = request.forms.name
@@ -54,7 +64,7 @@ def modify(bid):
     core.modify(bid, name, cur_epi, on_air, seeker)
 
 
-@app.post("/action/add")
+@app.post("/add")
 @auth
 def add():
     name = request.forms.name
@@ -64,20 +74,23 @@ def add():
     core.create(name, cur_epi, on_air, seeker)
 
 
-@app.route("/action/remove/<bid>")
+@app.route("/remove/<bid>")
 @auth
 def remove(bid):
     core.remove(bid)
 
 
-@app.route("/action/chkup/<bid>")
+@app.route("/chkup/<bid>")
 @auth
+@produceJson
 def chkup(bid):
     return json.dumps(core.chkup(bid))
 
 
-@app.route("/action/get_seekers/")
+@app.route("/get_seekers/")
+@app.route("/get_seekers")
 @auth
+@produceJson
 def getSeekers():
     return json.dumps(list(core.seeker.keys()))
 
