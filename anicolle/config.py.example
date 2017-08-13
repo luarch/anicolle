@@ -5,6 +5,7 @@ class Config:
     SERVER_HOST = "127.0.0.1"
     SERVER_PORT = "7777"
 
+
 class ProductionConfig(Config):
     AUTH_TOKEN = "YOUR_TOKEN"
     DEBUG = False
@@ -13,6 +14,5 @@ class ProductionConfig(Config):
 
 config = {
     'default': Config,
-
     'production': ProductionConfig
 }
