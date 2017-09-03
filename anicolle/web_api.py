@@ -43,6 +43,13 @@ def enable_cors():
             ] = 'Origin, Accept, Content-Type, X-Requested-With, X-Auth-Token'
 
 
+@app.route("/checkpoint", method=['GET', 'OPTIONS'])
+@auth
+@produceJson
+def checkPoint():
+    return {'status': 'success'}
+
+
 @app.route("/get/", method=['GET', 'OPTIONS'])
 @app.route("/get", method=['GET', 'OPTIONS'])
 @auth
