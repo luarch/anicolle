@@ -17,9 +17,14 @@ def produceJson(callback):
 
 
 def auth(callback):
+    def returnEmpty():
+        return None
+
     def decorator(*args, **kwargs):
         auth = request.get_header("X-Auth-Token")
-        if auth == auth_token:
+        if request.method == 'OPTIONS':
+            return returnEmpty()
+        elif auth == auth_token:
             return callback(*args, **kwargs)
         else:
             response.status = 401
@@ -35,71 +40,80 @@ def enable_cors():
             ] = 'PUT, GET, POST, DELETE, OPTIONS'
     response.headers[
             'Access-Control-Allow-Headers'
-            ] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+            ] = 'Origin, Accept, Content-Type, X-Requested-With, X-Auth-Token'
 
 
-@app.route("/get/")
-@app.route("/get")
+@app.route("/get/", method=['GET', 'OPTIONS'])
+@app.route("/get", method=['GET', 'OPTIONS'])
 @auth
 @produceJson
 def getAllBgm():
     return json.dumps(core.getAni())
 
 
-@app.route("/get/<bid>")
+@app.route("/get/<bid>", method=['GET', 'OPTIONS'])
 @auth
 @produceJson
 def getBgm(bid):
     return json.dumps(core.getAni(int(bid)))
 
 
-@app.route("/plus/<bid>")
+@app.route("/plus/<bid>", method=['GET', 'OPTIONS'])
 @auth
+@produceJson
 def plus(bid):
-    core.increase(bid)
+    return json.dumps({'cur_epi': core.increase(bid)})
 
 
-@app.route("/decrease/<bid>")
+@app.route("/decrease/<bid>", method=['GET', 'OPTIONS'])
 @auth
+@produceJson
 def decrease(bid):
-    core.decrease(bid)
+    return json.dumps({'cur_epi': core.decrease(bid)})
 
 
-@app.post("/modify/<bid>")
+@app.route("/modify/<bid>", method=['POST', 'OPTIONS'])
 @auth
+@produceJson
 def modify(bid):
     name = request.forms.name
     cur_epi = request.forms.cur_epi
     on_air = request.forms.on_air
-    seeker = json.loads(request.forms.seeker)
-    core.modify(bid, name, cur_epi, on_air, seeker)
+    if request.forms.seeker:
+        seeker = json.loads(request.forms.seeker)
+    else:
+        seeker = None
+    bgm_dict = core.modify(bid, name, cur_epi, on_air, seeker)
+    return json.dumps(bgm_dict)
 
 
-@app.post("/add")
+@app.route("/add", method=['POST', 'OPTIONS'])
 @auth
+@produceJson
 def add():
     name = request.forms.name
     cur_epi = request.forms.cur_epi
     on_air = request.forms.on_air
     seeker = json.loads(request.forms.seeker)
-    core.create(name, cur_epi, on_air, seeker)
+    bgm_dict = core.create(name, cur_epi, on_air, seeker)
+    return json.dumps(bgm_dict)
 
 
-@app.route("/remove/<bid>")
+@app.route("/remove/<bid>", method=['GET', 'OPTIONS'])
 @auth
 def remove(bid):
     core.remove(bid)
 
 
-@app.route("/chkup/<bid>")
+@app.route("/chkup/<bid>", method=['GET', 'OPTIONS'])
 @auth
 @produceJson
 def chkup(bid):
     return json.dumps(core.chkup(bid))
 
 
-@app.route("/get_seekers/")
-@app.route("/get_seekers")
+@app.route("/get_seekers/", method=['GET', 'OPTIONS'])
+@app.route("/get_seekers", method=['GET', 'OPTIONS'])
 @auth
 @produceJson
 def getSeekers():
