@@ -1,8 +1,8 @@
-# AniColle
+# Anicolle
 
 何これ？アニコレ！ ٩(๑´3｀๑)۶
 
-![AniColle](https://github.com/chienius/anicolle/raw/master/anicolle_logo.png)
+![Anicolle](https://github.com/chienius/anicolle/raw/master/anicolle_logo.png)
 
 这个程序主要用来收藏用户现在正在收看的番剧，并提供更新检测功能。
 
