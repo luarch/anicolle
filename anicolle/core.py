@@ -15,6 +15,7 @@ from .seeker import seeker
 from .config import config
 import os
 from json import loads as json_loads, dumps as json_dump
+from pypinyin import lazy_pinyin, Style
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -59,7 +60,8 @@ class Bangumi(Model):
             'cur_epi': self.cur_epi,
             'on_air_epi': self.on_air_epi,
             'on_air_day': self.on_air_day,
-            'seeker': self.seeker
+            'seeker': self.seeker,
+            'name_pinyin': ''.join(lazy_pinyin(self.name, Style.FIRST_LETTER))
         }
 
 def dbInit():
@@ -93,6 +95,7 @@ def create( name, cur_epi=0, on_air_day=0, seeker=[] ):
     bgm = Bangumi(name=name, cur_epi=cur_epi, on_air_day=on_air_day, seeker=json_dump(seeker));
     bgm.save()
     db.close()
+    return bgm.to_dict()
 
 def modify( bid, name=None, cur_epi=None, on_air_day=None, seeker=None ):
     db.connect()
@@ -112,7 +115,7 @@ def modify( bid, name=None, cur_epi=None, on_air_day=None, seeker=None ):
             bgm.seeker = json_dump(seeker)
 
         bgm.save()
-        return 1
+        return bgm.to_dict()
     except Bangumi.DoesNotExist:
         return 0
     finally:
@@ -135,7 +138,7 @@ def increase( bid ):
         bgm = Bangumi.get(Bangumi.id==bid)
         bgm.cur_epi = bgm.cur_epi +1
         bgm.save()
-        return 1
+        return bgm.cur_epi
     except Bangumi.DoesNotExist:
         return 0
     finally:
@@ -147,7 +150,7 @@ def decrease( bid ):
         bgm = Bangumi.get(Bangumi.id==bid)
         bgm.cur_epi = bgm.cur_epi -1
         bgm.save()
-        return 1
+        return bgm.cur_epi
     except Bangumi.DoesNotExist:
         return 0
     finally:

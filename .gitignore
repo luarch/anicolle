@@ -4,3 +4,5 @@ anicolle.db
 data
 anicolle/config.py
 venv
+*.swp
+.tags*
