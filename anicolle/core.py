@@ -15,6 +15,7 @@ from .seeker import seeker
 from .config import config
 import os
 from json import loads as json_loads, dumps as json_dump
+from pypinyin import lazy_pinyin, Style
 
 run_mode = os.getenv('ANICOLLE_MODE') or 'default'
 try:
@@ -59,7 +60,8 @@ class Bangumi(Model):
             'cur_epi': self.cur_epi,
             'on_air_epi': self.on_air_epi,
             'on_air_day': self.on_air_day,
-            'seeker': self.seeker
+            'seeker': self.seeker,
+            'name_pinyin': ''.join(lazy_pinyin(self.name, Style.FIRST_LETTER))
         }
 
 def dbInit():
