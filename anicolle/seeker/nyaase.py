@@ -12,9 +12,9 @@ def seek(chk_key, cur_epi):
     chk_key = urllib.parse.quote_plus(chk_key)
 
     # Get search result page
-    url = "https://nyaa.pantsu.cat/feed?c=_&s=0&limit=50\
+    url = "http://nyaa.pantsu.cat/feed?c=_&s=0&limit=50\
 &userID=0&q={}".format(chk_key)
-    r = requests.get(url, timeout=2)
+    r = requests.get(url, timeout=5)
     r.encoding = "utf-8"
 
     tree = ET.fromstring(r.text)
