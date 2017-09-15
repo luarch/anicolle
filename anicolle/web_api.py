@@ -69,14 +69,14 @@ def getBgm(bid):
 @auth
 @produceJson
 def plus(bid):
-    return json.dumps({'cur_epi': core.increase(bid)})
+    return json.dumps(core.increase(bid))
 
 
 @app.route("/decrease/<bid>", method=['GET', 'OPTIONS'])
 @auth
 @produceJson
 def decrease(bid):
-    return json.dumps({'cur_epi': core.decrease(bid)})
+    return json.dumps(core.decrease(bid))
 
 
 @app.route("/modify/<bid>", method=['POST', 'OPTIONS'])

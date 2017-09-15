@@ -138,7 +138,7 @@ def increase( bid ):
         bgm = Bangumi.get(Bangumi.id==bid)
         bgm.cur_epi = bgm.cur_epi +1
         bgm.save()
-        return bgm.cur_epi
+        return bgm.to_dict()
     except Bangumi.DoesNotExist:
         return 0
     finally:
@@ -150,7 +150,7 @@ def decrease( bid ):
         bgm = Bangumi.get(Bangumi.id==bid)
         bgm.cur_epi = bgm.cur_epi -1
         bgm.save()
-        return bgm.cur_epi
+        return bgm.to_dict()
     except Bangumi.DoesNotExist:
         return 0
     finally:
