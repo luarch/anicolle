@@ -11,6 +11,7 @@ You can force convert it into a dict by using to_dict().
 """
 
 from peewee import *
+import re
 from .seeker import seeker
 from .config import config
 import os
@@ -156,11 +157,23 @@ def decrease( bid ):
     finally:
         db.close()
 
-def chkup( bid ):
+
+def chkup(bid):
+    def getParams(chk_key):
+        pattern = "\s+--params:(.*)$"
+        match = re.search(pattern, chk_key)
+        if not match:
+            return chk_key, None
+        else:
+            params_str = match.group(1)
+            params = str(params_str).split(",")
+            params = list(map(lambda e: str(e).strip(), params))
+            return chk_key, params
+
     db.connect()
 
     try:
-        bgm = Bangumi.get( Bangumi.id==bid  )
+        bgm = Bangumi.get(Bangumi.id == bid)
     except Bangumi.DoesNotExist:
         return 0
     else:
@@ -171,15 +184,16 @@ def chkup( bid ):
 
         r = []
 
-        bgm_seeker_data = json_loads(bgm.seeker);
+        bgm_seeker_data = json_loads(bgm.seeker)
 
         for seeker_seed in bgm_seeker_data:
             try:
                 if not seeker_seed['chk_key']:
                     continue
+                chk_key, params = getParams(seeker_seed['chk_key'])
                 # Maybe we need some new names. This can be confusable.
                 seek_result = seeker[seeker_seed['seeker']].seek(
-                    seeker_seed['chk_key'], bgm.cur_epi)
+                    seeker_seed['chk_key'], bgm.cur_epi, params)
                 if type(seek_result) == list:
                     r = r+seek_result
             except KeyError:
@@ -193,4 +207,3 @@ def chkup( bid ):
         '''
     finally:
         db.close()
-

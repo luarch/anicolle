@@ -4,14 +4,16 @@ from bs4 import BeautifulSoup
 from json import loads
 import re
 
-def seek(chk_key, cur_epi):
+
+def seek(chk_key, cur_epi, params):
     tepi = cur_epi+1
     chk_key = str(chk_key)
 
     try:
         int(chk_key)
     except ValueError:
-        query_url = "http://search.bilibili.com/bangumi?keyword=%s" % (chk_key, )
+        query_url = ("http://search.bilibili.com/bangumi"
+                     "?keyword=%s") % (chk_key, )
         html_content = requests.get(query_url, timeout=2).text
         bs = BeautifulSoup(html_content, "html.parser")
         s_bgmlist = bs.find('div', class_="ajax-render")
@@ -27,7 +29,8 @@ def seek(chk_key, cur_epi):
     else:
         season_id = chk_key
 
-    api_url = "http://app.bilibili.com/bangumi/seasoninfo/%s.ver?callback=seasonListCallback" % (season_id,)
+    api_url = ("http://app.bilibili.com/bangumi/seasoninfo/%s.ver"
+               "?callback=seasonListCallback") % (season_id,)
     apiRes = requests.get(api_url, timeout=2).text
     apiRes = re.sub("^.+?\(", '', apiRes)
     apiRes = re.sub("\);", '', apiRes)
@@ -40,17 +43,20 @@ def seek(chk_key, cur_epi):
         for epi in epi_list:
             if epi['index'] == str(tepi):
                 av_id = epi['av_id']
-                av_page= epi['page']
+                av_page = epi['page']
                 break
         else:
-            raise IndexError;
+            raise IndexError
     except IndexError:
         return 0
 
-    link = "http://www.bilibili.com/video/av%s/index_%s.html" % (av_id, av_page)
+    link = ("http://www.bilibili.com/video/"
+            "av%s/index_%s.html") % (av_id, av_page)
     title = "%s - %d from Bilibili" % (av_name, tepi)
 
     return [{'link': link, 'title': title}]
 
+
 if __name__ == '__main__':
-    test_r = seek("食戟之灵 贰之皿", 10)
+    test_r = seek("食戟之灵 贰之皿", 10, ())
+    print(test_r)

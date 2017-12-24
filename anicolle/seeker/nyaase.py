@@ -4,11 +4,12 @@ import xml.etree.ElementTree as ET
 import urllib.parse
 
 
-def seek(chk_key, cur_epi):
+def seek(chk_key, cur_epi, params):
     # Compose search keyword
     tepi = cur_epi+1
+    tepi = str(tepi).zfill(2)
     chk_key = str(chk_key)
-    chk_key = "%s %02d" % (chk_key, tepi)
+    chk_key = "%s %s" % (chk_key, tepi)
     chk_key = urllib.parse.quote_plus(chk_key)
 
     # Get search result page
@@ -17,6 +18,7 @@ def seek(chk_key, cur_epi):
     r = requests.get(url, timeout=5)
     r.encoding = "utf-8"
 
+    print(r.text)
     tree = ET.fromstring(r.text)
 
     r = []
@@ -31,7 +33,7 @@ def seek(chk_key, cur_epi):
 
 
 if __name__ == '__main__':
-    r = seek("All Out!! Ohys", 14)
+    r = seek("All Out!! Ohys", 14, ())
     if r:
         for i in r:
             print(i['title'])
