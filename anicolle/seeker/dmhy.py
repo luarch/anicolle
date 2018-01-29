@@ -4,7 +4,7 @@ import re as _re
 import xml.etree.ElementTree as ET
 
 
-def seek(chk_key, cur_epi, params):
+def seek(chk_key, epi, params):
     """DMHY Seeker
 
     Seeks from: http://share.dmhy.org
@@ -17,7 +17,7 @@ def seek(chk_key, cur_epi, params):
         tepi_pad_size = int(params[0])
 
     # Compose search keyword
-    tepi = cur_epi+1
+    tepi = epi
     tepi = str(tepi).zfill(tepi_pad_size)
     chk_key = str(chk_key)
     chk_key = "%s %s" % (chk_key, tepi)

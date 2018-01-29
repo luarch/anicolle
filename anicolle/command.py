@@ -10,3 +10,5 @@ def main():
     ac.dbInit()
     if args.webui:
         web_api.start()
+    if args.version:
+        print("Anicolle Server: v0.2.3")

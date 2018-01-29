@@ -158,7 +158,7 @@ def decrease( bid ):
         db.close()
 
 
-def chkup(bid):
+def chkup(bid, episode=None):
     def getParams(chk_key):
         pattern = "\s+--params:(.*)$"
         match = re.search(pattern, chk_key)
@@ -181,6 +181,10 @@ def chkup(bid):
         Start of checking module
         \/_\/_\/_\/_\/_\/_\/_\/_\/
         '''
+        if episode is None or episode == '':
+            episode = bgm.cur_epi+1  # Check current episode +1
+        else:
+            episode = int(episode)
 
         r = []
 
@@ -193,7 +197,7 @@ def chkup(bid):
                 chk_key, params = getParams(seeker_seed['chk_key'])
                 # Maybe we need some new names. This can be confusable.
                 seek_result = seeker[seeker_seed['seeker']].seek(
-                    seeker_seed['chk_key'], bgm.cur_epi, params)
+                    seeker_seed['chk_key'], episode, params)
                 if type(seek_result) == list:
                     r = r+seek_result
             except KeyError:

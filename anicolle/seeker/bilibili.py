@@ -5,8 +5,8 @@ from json import loads
 import re
 
 
-def seek(chk_key, cur_epi, params):
-    tepi = cur_epi+1
+def seek(chk_key, epi, params):
+    tepi = epi
     chk_key = str(chk_key)
 
     try:

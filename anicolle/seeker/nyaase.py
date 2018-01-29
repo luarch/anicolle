@@ -4,9 +4,9 @@ import xml.etree.ElementTree as ET
 import urllib.parse
 
 
-def seek(chk_key, cur_epi, params):
+def seek(chk_key, epi, params):
     # Compose search keyword
-    tepi = cur_epi+1
+    tepi = epi
     tepi = str(tepi).zfill(2)
     chk_key = str(chk_key)
     chk_key = "%s %s" % (chk_key, tepi)

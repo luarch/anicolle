@@ -116,7 +116,8 @@ def remove(bid):
 @auth
 @produceJson
 def chkup(bid):
-    return json.dumps(core.chkup(bid))
+    episode = request.query.episode
+    return json.dumps(core.chkup(bid, episode))
 
 
 @app.route("/get_seekers/", method=['GET', 'OPTIONS'])
