@@ -55,7 +55,13 @@ def checkPoint():
 @auth
 @produceJson
 def getAllBgm():
-    return json.dumps(core.getAni())
+    search = request.query.search
+    bgms = core.getAni()
+    r = []
+    for bgm in bgms:
+        if search in bgm['name'] or search in bgm['name_pinyin']:
+            r.append(bgm)
+    return json.dumps(r)
 
 
 @app.route("/get/<bid>", method=['GET', 'OPTIONS'])
