@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from json import loads
 import re
+from ..config import config
 
 
 def seek(chk_key, epi, params):
@@ -14,7 +15,7 @@ def seek(chk_key, epi, params):
     except ValueError:
         query_url = ("http://search.bilibili.com/bangumi"
                      "?keyword=%s") % (chk_key, )
-        html_content = requests.get(query_url, timeout=2).text
+        html_content = requests.get(query_url, timeout=2, proxies=config['seekerProxies']).text
         bs = BeautifulSoup(html_content, "html.parser")
         s_bgmlist = bs.find('div', class_="ajax-render")
         try:

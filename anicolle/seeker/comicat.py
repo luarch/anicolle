@@ -2,7 +2,7 @@
 import requests
 import re as _re
 import xml.etree.ElementTree as ET
-
+from ..config import config
 
 def seek(chk_key, epi, params):
     """Comicat Seeker
@@ -24,7 +24,7 @@ def seek(chk_key, epi, params):
 
     # Get search result page
     url = "http://www.comicat.org/rss-{}.xml".format(chk_key)
-    r = requests.get(url, timeout=2)
+    r = requests.get(url, timeout=2, proxies=config['seekerProxies'])
     r.encoding = "utf-8"
 
     tree = ET.fromstring(r.text)

@@ -2,6 +2,7 @@
 import requests
 import xml.etree.ElementTree as ET
 import urllib.parse
+from ..config import config
 
 
 def seek(chk_key, epi, params):
@@ -14,7 +15,7 @@ def seek(chk_key, epi, params):
 
     # Get search result page
     url = "https://nyaa.si/?page=rss&q={}&c=0_0&f=0".format(chk_key)
-    r = requests.get(url, timeout=10)
+    r = requests.get(url, timeout=10, proxies=config['seekerProxies'])
     r.encoding = "utf-8"
 
     print(r.text)

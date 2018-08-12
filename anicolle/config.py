@@ -15,5 +15,7 @@ class ProductionConfig(Config):
 
 config = {
     'default': Config,
-    'production': ProductionConfig
+    'production': ProductionConfig,
+    'seekerProxies': {
+    }
 }
