@@ -6,3 +6,4 @@ anicolle/config.py
 venv
 *.swp
 .tags*
+__pycache__

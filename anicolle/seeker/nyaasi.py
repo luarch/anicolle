@@ -13,9 +13,8 @@ def seek(chk_key, epi, params):
     chk_key = urllib.parse.quote_plus(chk_key)
 
     # Get search result page
-    url = "http://nyaa.pantsu.cat/feed?c=_&s=0&limit=50\
-&userID=0&q={}".format(chk_key)
-    r = requests.get(url, timeout=5)
+    url = "https://nyaa.si/?page=rss&q={}&c=0_0&f=0".format(chk_key)
+    r = requests.get(url, timeout=10)
     r.encoding = "utf-8"
 
     print(r.text)
@@ -24,7 +23,7 @@ def seek(chk_key, epi, params):
     r = []
     for item in tree.iterfind("channel/item"):
         r.append({"title": item.find("title").text,
-                  "link": item.find('guid').text})
+                  "link": item.find('link').text})
 
     if len(r) == 0:
         return 0
