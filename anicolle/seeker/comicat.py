@@ -45,9 +45,9 @@ def seek(chk_key, epi, params):
 
 def isValid(item, tepi):
     title = item.find("title").text
-    pattern = "( |\[|{|第|【|〖)"
+    pattern = r"( |\[|{|第|【|〖)"
     pattern += _re.escape(tepi)
-    pattern += "(\]|话|話|集|〗|】|END| )"
+    pattern += r"(\]|话|話|集|〗|】|END| )"
     match = _re.search(pattern, title)
     return match
 

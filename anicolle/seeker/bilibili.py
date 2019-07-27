@@ -20,7 +20,7 @@ def seek(chk_key, epi, params):
         s_bgmlist = bs.find('div', class_="ajax-render")
         try:
             season_id = s_bgmlist.find('a', class_="title").get('href')
-            season_id = re.findall('\d+', season_id)
+            season_id = re.findall(r'\d+', season_id)
             if len(season_id):
                 season_id = season_id[0]
             else:
@@ -33,8 +33,8 @@ def seek(chk_key, epi, params):
     api_url = ("http://app.bilibili.com/bangumi/seasoninfo/%s.ver"
                "?callback=seasonListCallback") % (season_id,)
     apiRes = requests.get(api_url, timeout=2).text
-    apiRes = re.sub("^.+?\(", '', apiRes)
-    apiRes = re.sub("\);", '', apiRes)
+    apiRes = re.sub(r"^.+?\(", '', apiRes)
+    apiRes = re.sub(r"\);", '', apiRes)
     apiRes = loads(apiRes)
     epi_list = apiRes['result']['episodes']
 
