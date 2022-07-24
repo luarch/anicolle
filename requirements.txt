@@ -3,4 +3,4 @@ beautifulsoup4==4.5.3
 bottle==0.12.20
 peewee==2.8.5
 pypinyin==0.23.0
-requests==2.13.0
+requests==2.20.0
